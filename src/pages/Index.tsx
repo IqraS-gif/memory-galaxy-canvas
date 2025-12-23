@@ -3,17 +3,15 @@ import { AnimatePresence } from 'framer-motion';
 import { useMemories } from '@/hooks/useMemories';
 import { useConstellationSettings } from '@/hooks/useConstellationSettings';
 import { Memory, Mood } from '@/types/memory';
-import { Star } from '@/components/Star';
-import { AnimatedConstellationLines } from '@/components/AnimatedConstellationLines';
 import { MemoryModal } from '@/components/MemoryModal';
 import { UploadModal } from '@/components/UploadModal';
 import { TimelineView } from '@/components/TimelineView';
 import { BackgroundStars } from '@/components/BackgroundStars';
 import { ConstellationName } from '@/components/ConstellationName';
 import { Controls } from '@/components/Controls';
-import { EmptyState } from '@/components/EmptyState';
 import { AmbientSound } from '@/components/AmbientSound';
 import { ConstellationPatternSelector } from '@/components/ConstellationPatternSelector';
+import { ConstellationCanvas } from '@/components/ConstellationCanvas';
 
 const Index = () => {
   const {
@@ -64,27 +62,13 @@ const Index = () => {
       {/* Main content area */}
       <AnimatePresence mode="wait">
         {view === 'constellation' ? (
-          <div key="constellation" className="absolute inset-0">
-            {/* Animated constellation lines */}
-            <AnimatedConstellationLines 
-              memories={memories} 
-              pattern={pattern}
-              groupByMood={groupByMood}
-            />
-
-            {/* Stars */}
-            {memories.map((memory, index) => (
-              <Star
-                key={memory.id}
-                memory={memory}
-                onClick={() => handleStarClick(memory)}
-                index={index}
-              />
-            ))}
-
-            {/* Empty state */}
-            {memories.length === 0 && <EmptyState />}
-          </div>
+          <ConstellationCanvas
+            key="constellation"
+            memories={memories}
+            pattern={pattern}
+            groupByMood={groupByMood}
+            onStarClick={handleStarClick}
+          />
         ) : (
           <TimelineView
             key="timeline"

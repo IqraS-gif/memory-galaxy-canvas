@@ -2,7 +2,6 @@ import { ConstellationPattern } from '@/components/ConstellationPatternSelector'
 import { Memory, Mood } from '@/types/memory';
 
 // Constellation patterns defined as relative connections
-// Each pattern defines which star indices connect to which
 export const patternConnections: Record<ConstellationPattern, number[][]> = {
   auto: [], // Dynamic based on creation order
   capricorn: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [3, 8], [8, 9]],
@@ -22,11 +21,25 @@ export const patternConnections: Record<ConstellationPattern, number[][]> = {
   'ursa-minor': [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]],
 };
 
+// Mood cluster region definitions (areas of the screen for each mood)
+const moodRegions: Record<Mood, { centerX: number; centerY: number; radius: number }> = {
+  happy: { centerX: 0.25, centerY: 0.35, radius: 0.25 },
+  calm: { centerX: 0.75, centerY: 0.35, radius: 0.25 },
+  nostalgic: { centerX: 0.5, centerY: 0.7, radius: 0.25 },
+};
+
 export interface MemoryCluster {
   mood: Mood;
   memories: Memory[];
   centroid: { x: number; y: number };
+  label: string;
 }
+
+const moodLabels: Record<Mood, string> = {
+  happy: '☀️ Happy Memories',
+  calm: '🌊 Calm Moments',
+  nostalgic: '💜 Nostalgic Times',
+};
 
 export const groupMemoriesByMood = (memories: Memory[]): MemoryCluster[] => {
   const moodGroups: Record<Mood, Memory[]> = {
@@ -42,6 +55,7 @@ export const groupMemoriesByMood = (memories: Memory[]): MemoryCluster[] => {
   return Object.entries(moodGroups)
     .filter(([, mems]) => mems.length > 0)
     .map(([mood, mems]) => {
+      // Calculate actual centroid from memory positions
       const centroid = {
         x: mems.reduce((sum, m) => sum + m.position.x, 0) / mems.length,
         y: mems.reduce((sum, m) => sum + m.position.y, 0) / mems.length,
@@ -50,8 +64,29 @@ export const groupMemoriesByMood = (memories: Memory[]): MemoryCluster[] => {
         mood: mood as Mood,
         memories: mems,
         centroid,
+        label: moodLabels[mood as Mood],
       };
     });
+};
+
+// Get position for a memory when grouping by mood
+export const getClusteredPosition = (
+  mood: Mood,
+  index: number,
+  total: number
+): { x: number; y: number } => {
+  const region = moodRegions[mood];
+  const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
+  const height = typeof window !== 'undefined' ? window.innerHeight : 800;
+  
+  // Spiral arrangement within cluster
+  const angle = (index / Math.max(total, 1)) * Math.PI * 2 + (index * 0.5);
+  const distance = 60 + (index * 30) % 100;
+  
+  return {
+    x: region.centerX * width + Math.cos(angle) * distance,
+    y: region.centerY * height + Math.sin(angle) * distance,
+  };
 };
 
 export const getConnectionsForPattern = (
@@ -76,6 +111,13 @@ export const getConnectionsForPattern = (
           connections.push({
             from: clusterMemories[i],
             to: clusterMemories[i + 1],
+          });
+        }
+        // Close the loop if enough memories
+        if (clusterMemories.length >= 3) {
+          connections.push({
+            from: clusterMemories[clusterMemories.length - 1],
+            to: clusterMemories[0],
           });
         }
       } else {
