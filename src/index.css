@@ -86,7 +86,19 @@
   }
 
   .cosmic-bg {
-    background: var(--gradient-cosmic);
+    background: 
+      radial-gradient(ellipse 120% 80% at 50% 0%, hsl(220 60% 15% / 0.8) 0%, transparent 50%),
+      radial-gradient(ellipse 80% 60% at 20% 30%, hsl(240 50% 20% / 0.5) 0%, transparent 40%),
+      radial-gradient(ellipse 60% 50% at 80% 60%, hsl(200 60% 18% / 0.4) 0%, transparent 40%),
+      radial-gradient(ellipse 100% 100% at 50% 100%, hsl(260 40% 12% / 0.6) 0%, transparent 50%),
+      linear-gradient(180deg, 
+        hsl(220 55% 8%) 0%, 
+        hsl(225 50% 12%) 20%,
+        hsl(230 45% 15%) 40%,
+        hsl(220 50% 12%) 60%,
+        hsl(210 45% 10%) 80%,
+        hsl(200 40% 8%) 100%
+      );
   }
 
   .glass-card {

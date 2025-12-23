@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
-import { Plus, Sparkles, List, Heart } from 'lucide-react';
+import { Plus, Sparkles, List, Heart, Box, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ControlsProps {
-  view: 'constellation' | 'timeline' | 'emotions';
-  onViewChange: (view: 'constellation' | 'timeline' | 'emotions') => void;
+  view: 'constellation' | 'constellation3d' | 'timeline' | 'emotions';
+  onViewChange: (view: 'constellation' | 'constellation3d' | 'timeline' | 'emotions') => void;
   onAddClick: () => void;
   memoryCount: number;
   hasActiveConstellation: boolean;
@@ -34,9 +34,22 @@ export const Controls = ({
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
+            title="2D View"
           >
-            <Sparkles className="w-4 h-4" />
-            <span className="hidden sm:inline">Stars</span>
+            <Square className="w-4 h-4" />
+            <span className="hidden sm:inline">2D</span>
+          </button>
+          <button
+            onClick={() => onViewChange('constellation3d')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${
+              view === 'constellation3d'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+            title="3D View"
+          >
+            <Box className="w-4 h-4" />
+            <span className="hidden sm:inline">3D</span>
           </button>
           <button
             onClick={() => onViewChange('timeline')}
