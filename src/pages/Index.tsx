@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useMemories } from '@/hooks/useMemories';
+import { useConstellationSettings } from '@/hooks/useConstellationSettings';
 import { Memory, Mood } from '@/types/memory';
 import { Star } from '@/components/Star';
-import { ConstellationLines } from '@/components/ConstellationLines';
+import { AnimatedConstellationLines } from '@/components/AnimatedConstellationLines';
 import { MemoryModal } from '@/components/MemoryModal';
 import { UploadModal } from '@/components/UploadModal';
 import { TimelineView } from '@/components/TimelineView';
@@ -11,6 +12,8 @@ import { BackgroundStars } from '@/components/BackgroundStars';
 import { ConstellationName } from '@/components/ConstellationName';
 import { Controls } from '@/components/Controls';
 import { EmptyState } from '@/components/EmptyState';
+import { AmbientSound } from '@/components/AmbientSound';
+import { ConstellationPatternSelector } from '@/components/ConstellationPatternSelector';
 
 const Index = () => {
   const {
@@ -21,10 +24,18 @@ const Index = () => {
     updateConstellationName,
   } = useMemories();
 
+  const {
+    pattern,
+    groupByMood,
+    setPattern,
+    setGroupByMood,
+  } = useConstellationSettings();
+
   const [view, setView] = useState<'constellation' | 'timeline'>('constellation');
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [isMemoryModalOpen, setIsMemoryModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isPatternSelectorOpen, setIsPatternSelectorOpen] = useState(false);
 
   const handleStarClick = (memory: Memory) => {
     setSelectedMemory(memory);
@@ -44,6 +55,9 @@ const Index = () => {
       {/* Background stars */}
       <BackgroundStars />
 
+      {/* Ambient sound toggle */}
+      <AmbientSound />
+
       {/* Constellation name */}
       <ConstellationName name={constellationName} onNameChange={updateConstellationName} />
 
@@ -51,8 +65,12 @@ const Index = () => {
       <AnimatePresence mode="wait">
         {view === 'constellation' ? (
           <div key="constellation" className="absolute inset-0">
-            {/* Constellation lines */}
-            <ConstellationLines memories={memories} />
+            {/* Animated constellation lines */}
+            <AnimatedConstellationLines 
+              memories={memories} 
+              pattern={pattern}
+              groupByMood={groupByMood}
+            />
 
             {/* Stars */}
             {memories.map((memory, index) => (
@@ -81,6 +99,9 @@ const Index = () => {
         view={view}
         onViewChange={setView}
         onAddClick={() => setIsUploadModalOpen(true)}
+        onPatternClick={() => setIsPatternSelectorOpen(true)}
+        onToggleClusters={() => setGroupByMood(!groupByMood)}
+        groupByMood={groupByMood}
         memoryCount={memories.length}
       />
 
@@ -100,6 +121,14 @@ const Index = () => {
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onUpload={handleUpload}
+      />
+
+      {/* Pattern selector modal */}
+      <ConstellationPatternSelector
+        isOpen={isPatternSelectorOpen}
+        onClose={() => setIsPatternSelectorOpen(false)}
+        currentPattern={pattern}
+        onPatternSelect={setPattern}
       />
     </div>
   );
