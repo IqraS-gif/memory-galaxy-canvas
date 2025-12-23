@@ -10,6 +10,7 @@ import { BackgroundStars } from '@/components/BackgroundStars';
 import { Controls } from '@/components/Controls';
 import { AmbientSound } from '@/components/AmbientSound';
 import { ConstellationCanvas } from '@/components/ConstellationCanvas';
+import { Constellation3DView } from '@/components/Constellation3DView';
 import { ConstellationSwitcher } from '@/components/ConstellationSwitcher';
 import { CreateConstellationModal } from '@/components/CreateConstellationModal';
 import { EmptyState } from '@/components/EmptyState';
@@ -28,7 +29,7 @@ const Index = () => {
     removeMemory,
   } = useConstellations();
 
-  const [view, setView] = useState<'constellation' | 'timeline' | 'emotions'>('constellation');
+  const [view, setView] = useState<'constellation' | 'constellation3d' | 'timeline' | 'emotions'>('constellation');
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [isMemoryModalOpen, setIsMemoryModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -96,6 +97,12 @@ const Index = () => {
             memories={memories}
             pattern={pattern}
             groupByMood={false}
+            onStarClick={handleStarClick}
+          />
+        ) : view === 'constellation3d' ? (
+          <Constellation3DView
+            key="constellation3d"
+            memories={memories}
             onStarClick={handleStarClick}
           />
         ) : view === 'timeline' ? (
