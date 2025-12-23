@@ -1,13 +1,11 @@
 import { motion } from 'framer-motion';
-import { Plus, Sparkles, List, Layers, Heart } from 'lucide-react';
+import { Plus, Sparkles, List, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ControlsProps {
   view: 'constellation' | 'timeline' | 'emotions';
   onViewChange: (view: 'constellation' | 'timeline' | 'emotions') => void;
   onAddClick: () => void;
-  onToggleClusters: () => void;
-  groupByMood: boolean;
   memoryCount: number;
   hasActiveConstellation: boolean;
 }
@@ -16,8 +14,6 @@ export const Controls = ({
   view, 
   onViewChange, 
   onAddClick, 
-  onToggleClusters,
-  groupByMood,
   memoryCount,
   hasActiveConstellation
 }: ControlsProps) => {
@@ -67,23 +63,6 @@ export const Controls = ({
         </div>
 
         {/* Separator */}
-        <div className="w-px h-8 bg-border/50 hidden sm:block" />
-
-        {/* Cluster Toggle */}
-        <button
-          onClick={onToggleClusters}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-            groupByMood
-              ? 'bg-accent text-accent-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
-          }`}
-          title="Group by mood"
-        >
-          <Layers className="w-4 h-4" />
-          <span className="hidden sm:inline">Clusters</span>
-        </button>
-
-        {/* Separator */}
         <div className="w-px h-8 bg-border/50" />
 
         {/* Add Button */}
@@ -92,10 +71,10 @@ export const Controls = ({
           className="rounded-full gap-2 px-6"
           size="default"
           disabled={!hasActiveConstellation}
-          title={!hasActiveConstellation ? 'Create a constellation first' : 'Add a new star'}
+          title={!hasActiveConstellation ? 'Create a constellation first' : 'Add new stars'}
         >
           <Plus className="w-4 h-4" />
-          Add Star
+          Add Stars
         </Button>
 
         {/* Memory Count */}

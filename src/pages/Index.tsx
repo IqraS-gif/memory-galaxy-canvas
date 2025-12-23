@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useConstellations } from '@/hooks/useConstellations';
-import { useConstellationSettings } from '@/hooks/useConstellationSettings';
 import { Memory, Mood } from '@/types/memory';
 import { MemoryModal } from '@/components/MemoryModal';
 import { UploadModal } from '@/components/UploadModal';
@@ -29,8 +28,6 @@ const Index = () => {
     removeMemory,
   } = useConstellations();
 
-  const { groupByMood, setGroupByMood } = useConstellationSettings();
-
   const [view, setView] = useState<'constellation' | 'timeline' | 'emotions'>('constellation');
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [isMemoryModalOpen, setIsMemoryModalOpen] = useState(false);
@@ -45,6 +42,14 @@ const Index = () => {
   const handleUpload = (title: string, imageUrl: string, mood: Mood) => {
     if (activeConstellationId) {
       addMemory(title, imageUrl, mood, activeConstellationId);
+    }
+  };
+
+  const handleBulkUpload = (images: { title: string; imageUrl: string; mood: Mood }[]) => {
+    if (activeConstellationId) {
+      images.forEach((img) => {
+        addMemory(img.title, img.imageUrl, img.mood, activeConstellationId);
+      });
     }
   };
 
@@ -90,7 +95,7 @@ const Index = () => {
             key="constellation"
             memories={memories}
             pattern={pattern}
-            groupByMood={groupByMood}
+            groupByMood={false}
             onStarClick={handleStarClick}
           />
         ) : view === 'timeline' ? (
@@ -113,8 +118,6 @@ const Index = () => {
         view={view}
         onViewChange={setView}
         onAddClick={() => setIsUploadModalOpen(true)}
-        onToggleClusters={() => setGroupByMood(!groupByMood)}
-        groupByMood={groupByMood}
         memoryCount={memories.length}
         hasActiveConstellation={!!activeConstellation}
       />
@@ -135,6 +138,7 @@ const Index = () => {
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onUpload={handleUpload}
+        onBulkUpload={handleBulkUpload}
       />
 
       {/* Create constellation modal */}
