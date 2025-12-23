@@ -27,6 +27,7 @@ export const AnimatedConstellationLines = ({
   const [lines, setLines] = useState<AnimatedLine[]>([]);
   const progressRef = useRef<number[]>([]);
   const glowPhaseRef = useRef<number>(0);
+  const particlesRef = useRef<{ x: number; y: number; progress: number; lineIndex: number }[]>([]);
 
   // Update lines when memories or pattern changes
   useEffect(() => {
@@ -40,8 +41,14 @@ export const AnimatedConstellationLines = ({
       glowIntensity: 0.5,
     }));
 
-    // Initialize progress for each line
-    progressRef.current = newLines.map((_, i) => Math.min(1, (Date.now() - i * 100) / 1000));
+    // Initialize progress for each line (staggered animation)
+    progressRef.current = newLines.map(() => 0);
+    particlesRef.current = newLines.map((_, i) => ({
+      x: 0,
+      y: 0,
+      progress: 0,
+      lineIndex: i,
+    }));
     setLines(newLines);
   }, [memories, pattern, groupByMood]);
 
@@ -53,122 +60,162 @@ export const AnimatedConstellationLines = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    let startTime = Date.now();
+
     const animate = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       glowPhaseRef.current += 0.02;
 
-      lines.forEach((line, index) => {
-        // Animate progress
-        if (progressRef.current[index] < 1) {
-          progressRef.current[index] = Math.min(1, progressRef.current[index] + 0.02);
-        }
+      // Draw cluster labels and boundaries when grouping by mood
+      if (groupByMood) {
+        const clusters = groupMemoriesByMood(memories);
+        clusters.forEach((cluster) => {
+          if (cluster.memories.length < 1) return;
+          
+          const moodColor = getMoodColor(cluster.mood);
+          const pulseIntensity = 0.15 + Math.sin(glowPhaseRef.current * 0.5) * 0.05;
+          
+          // Draw cluster boundary
+          if (cluster.memories.length >= 2) {
+            const positions = cluster.memories.map(m => ({ x: m.position.x + 12, y: m.position.y + 12 }));
+            const minX = Math.min(...positions.map(p => p.x)) - 50;
+            const maxX = Math.max(...positions.map(p => p.x)) + 50;
+            const minY = Math.min(...positions.map(p => p.y)) - 50;
+            const maxY = Math.max(...positions.map(p => p.y)) + 50;
+            
+            const centerX = (minX + maxX) / 2;
+            const centerY = (minY + maxY) / 2;
+            const radiusX = (maxX - minX) / 2 + 30;
+            const radiusY = (maxY - minY) / 2 + 30;
 
-        const progress = progressRef.current[index];
+            // Gradient background for cluster
+            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.max(radiusX, radiusY));
+            gradient.addColorStop(0, `rgba(${moodColor}, ${pulseIntensity * 0.2})`);
+            gradient.addColorStop(0.7, `rgba(${moodColor}, ${pulseIntensity * 0.05})`);
+            gradient.addColorStop(1, `rgba(${moodColor}, 0)`);
+            
+            ctx.beginPath();
+            ctx.fillStyle = gradient;
+            ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Dotted boundary
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(${moodColor}, ${pulseIntensity * 0.6})`;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([8, 12]);
+            ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Cluster label
+            ctx.font = '14px "Space Grotesk", sans-serif';
+            ctx.fillStyle = `rgba(${moodColor}, 0.7)`;
+            ctx.textAlign = 'center';
+            ctx.fillText(cluster.label, centerX, minY - 15);
+          }
+        });
+      }
+
+      lines.forEach((line, index) => {
+        // Staggered line animation
+        const lineDelay = index * 300; // 300ms delay between each line
+        const lineElapsed = elapsed - lineDelay;
+        
+        if (lineElapsed < 0) return;
+        
+        const progress = Math.min(1, lineElapsed / 1000); // 1 second per line
+        progressRef.current[index] = progress;
+
         if (progress <= 0) return;
 
         const moodColor = getMoodColor(line.mood);
-        const glowIntensity = 0.3 + Math.sin(glowPhaseRef.current + index * 0.5) * 0.2;
+        const glowIntensity = 0.4 + Math.sin(glowPhaseRef.current + index * 0.5) * 0.3;
 
         // Calculate current end point based on progress
         const currentX = line.from.x + (line.to.x - line.from.x) * progress;
         const currentY = line.from.y + (line.to.y - line.from.y) * progress;
 
-        // Draw outer glow
+        // Draw outer glow (strongest)
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(${moodColor}, ${glowIntensity * 0.3})`;
-        ctx.lineWidth = 8;
+        ctx.strokeStyle = `rgba(${moodColor}, ${glowIntensity * 0.2})`;
+        ctx.lineWidth = 12;
         ctx.lineCap = 'round';
         ctx.shadowColor = `rgba(${moodColor}, ${glowIntensity})`;
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 30;
         ctx.moveTo(line.from.x, line.from.y);
         ctx.lineTo(currentX, currentY);
         ctx.stroke();
 
         // Draw middle glow
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(${moodColor}, ${glowIntensity * 0.5})`;
-        ctx.lineWidth = 4;
-        ctx.shadowBlur = 15;
+        ctx.strokeStyle = `rgba(${moodColor}, ${glowIntensity * 0.4})`;
+        ctx.lineWidth = 6;
+        ctx.shadowBlur = 20;
         ctx.moveTo(line.from.x, line.from.y);
         ctx.lineTo(currentX, currentY);
         ctx.stroke();
 
         // Draw main line
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(${moodColor}, ${0.6 + glowIntensity * 0.4})`;
-        ctx.lineWidth = 2;
-        ctx.shadowBlur = 10;
+        ctx.strokeStyle = `rgba(${moodColor}, ${0.7 + glowIntensity * 0.3})`;
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 15;
         ctx.moveTo(line.from.x, line.from.y);
         ctx.lineTo(currentX, currentY);
         ctx.stroke();
 
         // Draw core bright line
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(255, 255, 255, ${glowIntensity * 0.6})`;
-        ctx.lineWidth = 1;
-        ctx.shadowBlur = 5;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${glowIntensity * 0.7})`;
+        ctx.lineWidth = 1.5;
+        ctx.shadowBlur = 8;
         ctx.moveTo(line.from.x, line.from.y);
         ctx.lineTo(currentX, currentY);
         ctx.stroke();
 
-        // Draw animated particles along the line if still forming
+        // Animated energy particle traveling along line (while forming)
         if (progress < 1) {
-          const particleX = currentX;
-          const particleY = currentY;
-          
+          // Leading particle
           ctx.beginPath();
-          ctx.fillStyle = `rgba(255, 255, 255, ${0.8})`;
+          ctx.fillStyle = `rgba(255, 255, 255, 0.95)`;
           ctx.shadowColor = `rgba(${moodColor}, 1)`;
-          ctx.shadowBlur = 15;
-          ctx.arc(particleX, particleY, 4, 0, Math.PI * 2);
+          ctx.shadowBlur = 25;
+          ctx.arc(currentX, currentY, 6, 0, Math.PI * 2);
           ctx.fill();
+
+          // Inner glow
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${moodColor}, 0.8)`;
+          ctx.shadowBlur = 15;
+          ctx.arc(currentX, currentY, 4, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Trailing sparkles
+          for (let i = 1; i <= 3; i++) {
+            const trailProgress = Math.max(0, progress - (i * 0.05));
+            const trailX = line.from.x + (line.to.x - line.from.x) * trailProgress;
+            const trailY = line.from.y + (line.to.y - line.from.y) * trailProgress;
+            const trailOpacity = 0.6 - (i * 0.15);
+            const trailSize = 3 - (i * 0.5);
+
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(255, 255, 255, ${trailOpacity})`;
+            ctx.shadowBlur = 10;
+            ctx.arc(trailX, trailY, trailSize, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
 
         // Reset shadow for next iteration
         ctx.shadowBlur = 0;
       });
-
-      // Draw cluster boundaries if grouping by mood
-      if (groupByMood) {
-        const clusters = groupMemoriesByMood(memories);
-        clusters.forEach((cluster) => {
-          if (cluster.memories.length < 2) return;
-          
-          const moodColor = getMoodColor(cluster.mood);
-          const glowIntensity = 0.1 + Math.sin(glowPhaseRef.current * 0.5) * 0.05;
-          
-          // Draw subtle cluster boundary
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(${moodColor}, ${glowIntensity})`;
-          ctx.lineWidth = 1;
-          ctx.setLineDash([5, 10]);
-          
-          // Simple bounding ellipse around cluster centroid
-          const maxDist = Math.max(
-            ...cluster.memories.map(m => 
-              Math.sqrt(
-                Math.pow(m.position.x + 12 - cluster.centroid.x - 12, 2) + 
-                Math.pow(m.position.y + 12 - cluster.centroid.y - 12, 2)
-              )
-            )
-          ) + 40;
-          
-          ctx.ellipse(
-            cluster.centroid.x + 12,
-            cluster.centroid.y + 12,
-            maxDist,
-            maxDist * 0.8,
-            0,
-            0,
-            Math.PI * 2
-          );
-          ctx.stroke();
-          ctx.setLineDash([]);
-        });
-      }
 
       animationRef.current = requestAnimationFrame(animate);
     };
