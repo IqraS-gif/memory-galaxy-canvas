@@ -1,9 +1,7 @@
 import { motion } from 'framer-motion';
-import { Memory } from '@/types/memory';
-import { ConstellationPattern } from '@/components/ConstellationPatternSelector';
+import { Memory, ConstellationPattern } from '@/types/memory';
 import { Star } from '@/components/Star';
 import { AnimatedConstellationLines } from '@/components/AnimatedConstellationLines';
-import { EmptyState } from '@/components/EmptyState';
 import { ZoomControls } from '@/components/ZoomControls';
 import { useZoomPan } from '@/hooks/useZoomPan';
 
@@ -52,9 +50,6 @@ export const ConstellationCanvas = ({
             />
           ))}
         </motion.div>
-
-        {/* Empty state */}
-        {memories.length === 0 && <EmptyState />}
       </div>
 
       {/* Zoom Controls */}

@@ -1,25 +1,25 @@
 import { motion } from 'framer-motion';
-import { Plus, Sparkles, List, Settings2, Layers } from 'lucide-react';
+import { Plus, Sparkles, List, Layers, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ControlsProps {
-  view: 'constellation' | 'timeline';
-  onViewChange: (view: 'constellation' | 'timeline') => void;
+  view: 'constellation' | 'timeline' | 'emotions';
+  onViewChange: (view: 'constellation' | 'timeline' | 'emotions') => void;
   onAddClick: () => void;
-  onPatternClick: () => void;
   onToggleClusters: () => void;
   groupByMood: boolean;
   memoryCount: number;
+  hasActiveConstellation: boolean;
 }
 
 export const Controls = ({ 
   view, 
   onViewChange, 
   onAddClick, 
-  onPatternClick,
   onToggleClusters,
   groupByMood,
-  memoryCount 
+  memoryCount,
+  hasActiveConstellation
 }: ControlsProps) => {
   return (
     <motion.div
@@ -33,18 +33,18 @@ export const Controls = ({
         <div className="flex items-center bg-secondary/50 rounded-full p-1">
           <button
             onClick={() => onViewChange('constellation')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${
               view === 'constellation'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <Sparkles className="w-4 h-4" />
-            <span className="hidden sm:inline">Constellation</span>
+            <span className="hidden sm:inline">Stars</span>
           </button>
           <button
             onClick={() => onViewChange('timeline')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${
               view === 'timeline'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-foreground'
@@ -52,6 +52,17 @@ export const Controls = ({
           >
             <List className="w-4 h-4" />
             <span className="hidden sm:inline">Timeline</span>
+          </button>
+          <button
+            onClick={() => onViewChange('emotions')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${
+              view === 'emotions'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Heart className="w-4 h-4" />
+            <span className="hidden sm:inline">Emotions</span>
           </button>
         </div>
 
@@ -72,16 +83,6 @@ export const Controls = ({
           <span className="hidden sm:inline">Clusters</span>
         </button>
 
-        {/* Pattern Selector */}
-        <button
-          onClick={onPatternClick}
-          className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all"
-          title="Choose constellation pattern"
-        >
-          <Settings2 className="w-4 h-4" />
-          <span className="hidden sm:inline">Pattern</span>
-        </button>
-
         {/* Separator */}
         <div className="w-px h-8 bg-border/50" />
 
@@ -90,6 +91,8 @@ export const Controls = ({
           onClick={onAddClick}
           className="rounded-full gap-2 px-6"
           size="default"
+          disabled={!hasActiveConstellation}
+          title={!hasActiveConstellation ? 'Create a constellation first' : 'Add a new star'}
         >
           <Plus className="w-4 h-4" />
           Add Star
