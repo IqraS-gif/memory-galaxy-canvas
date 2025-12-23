@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ConstellationPattern } from '@/components/ConstellationPatternSelector';
+import { ConstellationPattern } from '@/types/memory';
 
 const SETTINGS_KEY = 'stellar-constellation-settings';
 

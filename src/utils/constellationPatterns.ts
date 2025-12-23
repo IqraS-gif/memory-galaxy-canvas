@@ -1,5 +1,4 @@
-import { ConstellationPattern } from '@/components/ConstellationPatternSelector';
-import { Memory, Mood } from '@/types/memory';
+import { Memory, Mood, ConstellationPattern } from '@/types/memory';
 
 // Constellation patterns defined as relative connections
 export const patternConnections: Record<ConstellationPattern, number[][]> = {

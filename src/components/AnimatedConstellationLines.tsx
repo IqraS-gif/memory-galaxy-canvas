@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Memory, Mood } from '@/types/memory';
-import { ConstellationPattern } from '@/components/ConstellationPatternSelector';
+import { Memory, Mood, ConstellationPattern } from '@/types/memory';
 import { getConnectionsForPattern, getMoodColor, groupMemoriesByMood } from '@/utils/constellationPatterns';
 
 interface AnimatedConstellationLinesProps {
