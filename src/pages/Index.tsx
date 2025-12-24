@@ -15,6 +15,7 @@ import { ConstellationSwitcher } from '@/components/ConstellationSwitcher';
 import { CreateConstellationModal } from '@/components/CreateConstellationModal';
 import { EmptyState } from '@/components/EmptyState';
 import { PhotoBooth } from '@/components/PhotoBooth';
+import { StatsView } from '@/components/StatsView';
 
 const Index = () => {
   const {
@@ -33,12 +34,18 @@ const Index = () => {
   
   const [backgroundStyle, setBackgroundStyle] = useState<'gradient' | 'nebula'>('gradient');
 
-  const [view, setView] = useState<'constellation' | 'constellation3d' | 'timeline' | 'emotions'>('constellation');
+  const [view, setView] = useState<'constellation' | 'constellation3d' | 'timeline' | 'emotions' | 'stats'>('constellation');
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [isMemoryModalOpen, setIsMemoryModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isCreateConstellationOpen, setIsCreateConstellationOpen] = useState(false);
   const [isPhotoBoothOpen, setIsPhotoBoothOpen] = useState(false);
+
+  const handlePhotoBoothAddToConstellation = (imageUrl: string, mood: Mood) => {
+    if (activeConstellationId) {
+      addMemory('Photo Booth Memory', imageUrl, mood, activeConstellationId);
+    }
+  };
 
   const handleStarClick = (memory: Memory) => {
     setSelectedMemory(memory);
@@ -117,11 +124,17 @@ const Index = () => {
             memories={memories}
             onMemoryClick={handleStarClick}
           />
-        ) : (
+        ) : view === 'emotions' ? (
           <EmotionTimeline
             key="emotions"
             memories={memories}
             onMemoryClick={handleStarClick}
+          />
+        ) : (
+          <StatsView
+            key="stats"
+            memories={memories}
+            constellationName={activeConstellation?.name}
           />
         )}
       </AnimatePresence>
@@ -136,6 +149,8 @@ const Index = () => {
         hasActiveConstellation={!!activeConstellation}
         backgroundStyle={backgroundStyle}
         onBackgroundStyleChange={setBackgroundStyle}
+        memories={memories}
+        constellationName={activeConstellation?.name}
       />
 
       {/* Memory detail modal */}
@@ -168,6 +183,8 @@ const Index = () => {
       <PhotoBooth
         isOpen={isPhotoBoothOpen}
         onClose={() => setIsPhotoBoothOpen(false)}
+        onAddToConstellation={handlePhotoBoothAddToConstellation}
+        hasActiveConstellation={!!activeConstellation}
       />
     </div>
   );
