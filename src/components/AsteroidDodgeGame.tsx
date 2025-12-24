@@ -57,9 +57,22 @@ export const AsteroidDodgeGame = ({ isOpen, onClose }: AsteroidDodgeGameProps) =
   const resetGame = useCallback(() => {
     setScore(0);
     setShipPosition({ x: 50, y: 80 });
-    setAsteroids([]);
     difficultyRef.current = 1;
     asteroidIdRef.current = 0;
+    
+    // Spawn initial asteroids immediately
+    const initialAsteroids: Asteroid[] = [];
+    for (let i = 0; i < 5; i++) {
+      initialAsteroids.push({
+        id: asteroidIdRef.current++,
+        x: Math.random() * 90 + 5,
+        y: Math.random() * 40 - 20, // Start above and in the top portion
+        size: Math.random() * 6 + 4,
+        speed: Math.random() * 0.3 + 0.3,
+        rotation: Math.random() * 360,
+      });
+    }
+    setAsteroids(initialAsteroids);
   }, []);
 
   const startGame = useCallback(() => {
