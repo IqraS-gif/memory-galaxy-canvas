@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Plus, Sparkles, List, Heart, Box, Square } from 'lucide-react';
+import { Plus, List, Heart, Box, Square, Image, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ControlsProps {
@@ -8,6 +8,8 @@ interface ControlsProps {
   onAddClick: () => void;
   memoryCount: number;
   hasActiveConstellation: boolean;
+  backgroundStyle: 'gradient' | 'nebula';
+  onBackgroundStyleChange: (style: 'gradient' | 'nebula') => void;
 }
 
 export const Controls = ({ 
@@ -15,7 +17,9 @@ export const Controls = ({
   onViewChange, 
   onAddClick, 
   memoryCount,
-  hasActiveConstellation
+  hasActiveConstellation,
+  backgroundStyle,
+  onBackgroundStyleChange
 }: ControlsProps) => {
   return (
     <motion.div
@@ -72,6 +76,35 @@ export const Controls = ({
           >
             <Heart className="w-4 h-4" />
             <span className="hidden sm:inline">Emotions</span>
+          </button>
+        </div>
+
+        {/* Separator */}
+        <div className="w-px h-8 bg-border/50" />
+
+        {/* Background Toggle */}
+        <div className="flex items-center bg-secondary/50 rounded-full p-1">
+          <button
+            onClick={() => onBackgroundStyleChange('gradient')}
+            className={`flex items-center gap-1 px-3 py-2 rounded-full text-sm font-medium transition-all ${
+              backgroundStyle === 'gradient'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+            title="Gradient Background"
+          >
+            <Palette className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onBackgroundStyleChange('nebula')}
+            className={`flex items-center gap-1 px-3 py-2 rounded-full text-sm font-medium transition-all ${
+              backgroundStyle === 'nebula'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+            title="Nebula Background"
+          >
+            <Image className="w-4 h-4" />
           </button>
         </div>
 
