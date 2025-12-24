@@ -10,6 +10,7 @@ interface ConstellationCanvasProps {
   pattern: ConstellationPattern;
   groupByMood: boolean;
   onStarClick: (memory: Memory) => void;
+  constellationName?: string;
 }
 
 export const ConstellationCanvas = ({
@@ -17,6 +18,7 @@ export const ConstellationCanvas = ({
   pattern,
   groupByMood,
   onStarClick,
+  constellationName,
 }: ConstellationCanvasProps) => {
   const { transform, containerRef, handlers, resetTransform, zoomIn, zoomOut } = useZoomPan();
 
@@ -49,6 +51,23 @@ export const ConstellationCanvas = ({
               index={index}
             />
           ))}
+
+          {/* Constellation name label */}
+          {constellationName && memories.length > 0 && (
+            <div 
+              className="absolute pointer-events-none"
+              style={{
+                left: `${Math.min(...memories.map(m => m.position.x)) - 5}%`,
+                top: `${Math.min(...memories.map(m => m.position.y)) - 8}%`,
+              }}
+            >
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-1 rounded-full">
+                <span className="text-white/80 text-sm font-medium tracking-wide">
+                  ✦ {constellationName}
+                </span>
+              </div>
+            </div>
+          )}
         </motion.div>
       </div>
 

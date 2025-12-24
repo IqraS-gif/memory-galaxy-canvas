@@ -132,12 +132,15 @@ const CuteHeart = ({ className = '', color = '#FF69B4' }: { className?: string; 
 export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const collageCanvasRef = useRef<HTMLCanvasElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [selectedFrame, setSelectedFrame] = useState<SpaceFrame>('none');
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
+  const [collageImage, setCollageImage] = useState<string | null>(null);
+  const [selectedFrame, setSelectedFrame] = useState<SpaceFrame>('kawaii-space');
   const [selectedFilter, setSelectedFilter] = useState<SpaceFilter>('none');
   const [isCapturing, setIsCapturing] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [photoCount, setPhotoCount] = useState(0);
 
   const startCamera = useCallback(async () => {
     try {
@@ -167,12 +170,16 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
       startCamera();
     } else {
       stopCamera();
-      setCapturedImage(null);
+      setCapturedImages([]);
+      setCollageImage(null);
+      setPhotoCount(0);
     }
     return () => stopCamera();
   }, [isOpen]);
 
   const capturePhoto = useCallback(() => {
+    if (collageImage) return; // Already have collage
+    
     setCountdown(3);
     const interval = setInterval(() => {
       setCountdown(prev => {
@@ -193,9 +200,19 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
                   if (filter?.style) {
                     ctx.filter = filter.style;
                   }
+                  // Draw without flip for saved image
                   ctx.drawImage(video, 0, 0);
                   ctx.filter = 'none';
-                  setCapturedImage(canvas.toDataURL('image/png'));
+                  
+                  const newImage = canvas.toDataURL('image/png');
+                  const newImages = [...capturedImages, newImage];
+                  setCapturedImages(newImages);
+                  setPhotoCount(prev => prev + 1);
+                  
+                  // If we have 3 photos, create collage
+                  if (newImages.length >= 3) {
+                    createCollage(newImages);
+                  }
                 }
               }
               setIsCapturing(false);
@@ -206,19 +223,83 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
         return prev ? prev - 1 : null;
       });
     }, 1000);
-  }, [selectedFilter]);
+  }, [selectedFilter, capturedImages, collageImage]);
+
+  const createCollage = useCallback((images: string[]) => {
+    const collageCanvas = collageCanvasRef.current;
+    if (!collageCanvas) return;
+
+    const ctx = collageCanvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set collage size (portrait strip like photo booth)
+    const photoWidth = 300;
+    const photoHeight = 225;
+    const padding = 20;
+    const borderWidth = 40;
+    
+    collageCanvas.width = photoWidth + borderWidth * 2;
+    collageCanvas.height = (photoHeight * 3) + (padding * 2) + borderWidth * 2 + 60;
+
+    // Create pastel gradient background
+    const gradient = ctx.createLinearGradient(0, 0, collageCanvas.width, collageCanvas.height);
+    gradient.addColorStop(0, '#E6B3FF');
+    gradient.addColorStop(0.5, '#FFB3D9');
+    gradient.addColorStop(1, '#B3E0FF');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
+
+    // Load and draw images
+    let loadedCount = 0;
+    const imageElements: HTMLImageElement[] = [];
+
+    images.slice(0, 3).forEach((src, index) => {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        imageElements[index] = img;
+        
+        if (loadedCount === 3) {
+          // Draw all images
+          imageElements.forEach((imgEl, i) => {
+            const x = borderWidth;
+            const y = borderWidth + i * (photoHeight + padding);
+            
+            // White border for each photo
+            ctx.fillStyle = 'white';
+            ctx.fillRect(x - 4, y - 4, photoWidth + 8, photoHeight + 8);
+            
+            // Draw image
+            ctx.drawImage(imgEl, x, y, photoWidth, photoHeight);
+          });
+
+          // Add cute text at bottom
+          ctx.fillStyle = '#9B59B6';
+          ctx.font = 'bold 16px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('✨ CUTE SPACE BOOTH ✨', collageCanvas.width / 2, collageCanvas.height - 20);
+
+          setCollageImage(collageCanvas.toDataURL('image/png'));
+        }
+      };
+      img.src = src;
+    });
+  }, []);
 
   const downloadPhoto = useCallback(() => {
-    if (!capturedImage) return;
+    const imageToDownload = collageImage || (capturedImages.length > 0 ? capturedImages[capturedImages.length - 1] : null);
+    if (!imageToDownload) return;
     const link = document.createElement('a');
-    link.download = `space-memory-${Date.now()}.png`;
-    link.href = capturedImage;
+    link.download = `space-booth-${Date.now()}.png`;
+    link.href = imageToDownload;
     link.click();
     toast.success('Photo saved to downloads!');
-  }, [capturedImage]);
+  }, [collageImage, capturedImages]);
 
   const retake = useCallback(() => {
-    setCapturedImage(null);
+    setCapturedImages([]);
+    setCollageImage(null);
+    setPhotoCount(0);
   }, []);
 
   const getFrameOverlay = () => {
@@ -349,11 +430,11 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
 
           {/* Camera View */}
           <div className="relative aspect-[4/3] bg-black overflow-hidden">
-            {capturedImage ? (
+            {collageImage ? (
               <img 
-                src={capturedImage} 
-                alt="Captured" 
-                className="w-full h-full object-cover"
+                src={collageImage} 
+                alt="Collage" 
+                className="w-full h-full object-contain bg-gradient-to-br from-purple-200 to-pink-200"
               />
             ) : (
               <video
@@ -369,8 +450,17 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
               />
             )}
             
-            {/* Frame Overlay */}
-            {getFrameOverlay()}
+            {/* Frame Overlay - only show when not showing collage */}
+            {!collageImage && getFrameOverlay()}
+
+            {/* Photo count indicator */}
+            {!collageImage && capturedImages.length > 0 && (
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-pink-500/80 px-4 py-1 rounded-full">
+                <span className="text-white text-sm font-medium">
+                  📸 {capturedImages.length}/3
+                </span>
+              </div>
+            )}
 
             {/* Countdown */}
             <AnimatePresence>
@@ -400,6 +490,7 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
             </AnimatePresence>
 
             <canvas ref={canvasRef} className="hidden" />
+            <canvas ref={collageCanvasRef} className="hidden" />
           </div>
 
           {/* Controls */}
@@ -451,7 +542,7 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
 
             {/* Action Buttons */}
             <div className="flex justify-center gap-3 pt-2">
-              {capturedImage ? (
+              {collageImage ? (
                 <>
                   <Button
                     variant="outline"
@@ -459,24 +550,24 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
                     className="gap-2 border-white/20 text-white hover:bg-white/10"
                   >
                     <RotateCcw className="w-4 h-4" />
-                    Retake
+                    Start Over
                   </Button>
                   <Button
                     onClick={downloadPhoto}
                     className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                   >
                     <Download className="w-4 h-4" />
-                    Save Photo
+                    Save Collage
                   </Button>
                 </>
               ) : (
                 <Button
                   onClick={capturePhoto}
                   disabled={countdown !== null}
-                  className="gap-2 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 px-8"
+                  className="gap-2 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 px-8"
                 >
                   <Camera className="w-4 h-4" />
-                  Capture
+                  {capturedImages.length === 0 ? 'Take 3 Photos' : `Photo ${capturedImages.length + 1} of 3`}
                 </Button>
               )}
             </div>
