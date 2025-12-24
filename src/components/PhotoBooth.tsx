@@ -28,7 +28,116 @@ const filters: { id: SpaceFilter; name: string; style: string }[] = [
   { id: 'lavender', name: 'Lavender', style: 'hue-rotate(20deg) brightness(1.05) saturate(0.9)' },
 ];
 
-// Cute sticker components
+// SVG string generators for canvas drawing
+const getSvgAstronaut = () => `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 80">
+  <ellipse cx="30" cy="30" rx="22" ry="24" fill="#f0f0f0" stroke="#ddd" stroke-width="2"/>
+  <ellipse cx="30" cy="28" rx="16" ry="17" fill="#87CEEB" opacity="0.6"/>
+  <circle cx="24" cy="26" r="4" fill="#333"/>
+  <circle cx="36" cy="26" r="4" fill="#333"/>
+  <circle cx="25" cy="25" r="1.5" fill="white"/>
+  <circle cx="37" cy="25" r="1.5" fill="white"/>
+  <ellipse cx="30" cy="34" rx="3" ry="2" fill="#FFB6C1"/>
+  <path d="M26 38 Q30 42 34 38" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="20" cy="32" rx="3" ry="2" fill="#FFB6C1" opacity="0.5"/>
+  <ellipse cx="40" cy="32" rx="3" ry="2" fill="#FFB6C1" opacity="0.5"/>
+  <rect x="22" y="54" rx="8" ry="8" width="16" height="20" fill="#f0f0f0" stroke="#ddd" stroke-width="2"/>
+  <ellipse cx="14" cy="62" rx="6" ry="4" fill="#f0f0f0" stroke="#ddd" stroke-width="2"/>
+  <ellipse cx="46" cy="62" rx="6" ry="4" fill="#f0f0f0" stroke="#ddd" stroke-width="2"/>
+</svg>`;
+
+const getSvgPlanet = (color = '#E6B3FF') => `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+  <circle cx="25" cy="25" r="18" fill="${color}"/>
+  <ellipse cx="25" cy="25" rx="28" ry="6" fill="none" stroke="${color}" stroke-width="3" opacity="0.7" transform="rotate(-20 25 25)"/>
+  <circle cx="18" cy="20" r="3" fill="white" opacity="0.4"/>
+  <circle cx="30" cy="30" r="4" fill="white" opacity="0.3"/>
+  <circle cx="20" cy="22" r="2.5" fill="#333"/>
+  <circle cx="30" cy="22" r="2.5" fill="#333"/>
+  <circle cx="21" cy="21" r="1" fill="white"/>
+  <circle cx="31" cy="21" r="1" fill="white"/>
+  <path d="M23 28 Q25 31 27 28" fill="none" stroke="#333" stroke-width="1.2" stroke-linecap="round"/>
+  <ellipse cx="16" cy="26" rx="2" ry="1.5" fill="#FFB6C1" opacity="0.5"/>
+  <ellipse cx="34" cy="26" rx="2" ry="1.5" fill="#FFB6C1" opacity="0.5"/>
+</svg>`;
+
+const getSvgAlien = () => `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 60">
+  <ellipse cx="25" cy="30" rx="18" ry="22" fill="#98FB98"/>
+  <ellipse cx="15" cy="12" rx="4" ry="8" fill="#98FB98"/>
+  <ellipse cx="35" cy="12" rx="4" ry="8" fill="#98FB98"/>
+  <circle cx="15" cy="6" r="4" fill="#FFD700"/>
+  <circle cx="35" cy="6" r="4" fill="#FFD700"/>
+  <ellipse cx="18" cy="26" rx="5" ry="6" fill="#333"/>
+  <ellipse cx="32" cy="26" rx="5" ry="6" fill="#333"/>
+  <ellipse cx="19" cy="24" rx="2" ry="3" fill="white"/>
+  <ellipse cx="33" cy="24" rx="2" ry="3" fill="white"/>
+  <path d="M22 38 Q25 42 28 38" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="14" cy="32" rx="2" ry="1.5" fill="#FFB6C1" opacity="0.6"/>
+  <ellipse cx="36" cy="32" rx="2" ry="1.5" fill="#FFB6C1" opacity="0.6"/>
+</svg>`;
+
+const getSvgRocket = () => `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 70">
+  <path d="M20 5 Q30 20 30 45 L10 45 Q10 20 20 5" fill="#FF6B6B"/>
+  <ellipse cx="20" cy="35" rx="8" ry="10" fill="#87CEEB"/>
+  <circle cx="20" cy="33" r="4" fill="#333"/>
+  <circle cx="18" cy="31" r="1.5" fill="white"/>
+  <path d="M10 45 L5 60 L12 50" fill="#FFD93D"/>
+  <path d="M30 45 L35 60 L28 50" fill="#FFD93D"/>
+  <ellipse cx="20" cy="60" rx="6" ry="10" fill="#FF9F43" opacity="0.8"/>
+  <ellipse cx="20" cy="62" rx="4" ry="6" fill="#FFD93D"/>
+</svg>`;
+
+const getSvgStar = (color = '#FFD700') => `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <path d="M20 2 L24 14 L37 14 L27 22 L31 35 L20 27 L9 35 L13 22 L3 14 L16 14 Z" fill="${color}"/>
+  <circle cx="16" cy="18" r="2" fill="#333"/>
+  <circle cx="24" cy="18" r="2" fill="#333"/>
+  <circle cx="17" cy="17" r="0.8" fill="white"/>
+  <circle cx="25" cy="17" r="0.8" fill="white"/>
+  <path d="M18 23 Q20 25 22 23" fill="none" stroke="#333" stroke-width="1" stroke-linecap="round"/>
+</svg>`;
+
+const getSvgBear = () => `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 55">
+  <circle cx="12" cy="12" r="8" fill="#D2691E"/>
+  <circle cx="38" cy="12" r="8" fill="#D2691E"/>
+  <circle cx="12" cy="12" r="4" fill="#8B4513"/>
+  <circle cx="38" cy="12" r="4" fill="#8B4513"/>
+  <circle cx="25" cy="30" r="20" fill="#D2691E"/>
+  <circle cx="18" cy="26" r="3" fill="#333"/>
+  <circle cx="32" cy="26" r="3" fill="#333"/>
+  <circle cx="19" cy="25" r="1" fill="white"/>
+  <circle cx="33" cy="25" r="1" fill="white"/>
+  <ellipse cx="25" cy="34" rx="5" ry="4" fill="#8B4513"/>
+  <ellipse cx="25" cy="33" rx="2" ry="1.5" fill="#333"/>
+  <path d="M23 37 Q25 39 27 37" fill="none" stroke="#333" stroke-width="1" stroke-linecap="round"/>
+  <ellipse cx="14" cy="30" rx="3" ry="2" fill="#FFB6C1" opacity="0.6"/>
+  <ellipse cx="36" cy="30" rx="3" ry="2" fill="#FFB6C1" opacity="0.6"/>
+</svg>`;
+
+const getSvgHeart = (color = '#FF69B4') => `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 28">
+  <path d="M15 26 C5 18 0 12 0 7 C0 3 3 0 7 0 C10 0 13 2 15 5 C17 2 20 0 23 0 C27 0 30 3 30 7 C30 12 25 18 15 26" fill="${color}"/>
+</svg>`;
+
+// Helper to convert SVG string to image
+const svgToImage = (svgString: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const blob = new Blob([svgString], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+};
+
+// React components for live preview
 const CuteAstronaut = ({ className = '' }: { className?: string }) => (
   <svg viewBox="0 0 60 80" className={className}>
     <ellipse cx="30" cy="30" rx="22" ry="24" fill="#f0f0f0" stroke="#ddd" strokeWidth="2"/>
@@ -225,7 +334,7 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     }, 1000);
   }, [selectedFilter, capturedImages, collageImage]);
 
-  const createCollage = useCallback((images: string[]) => {
+  const createCollage = useCallback(async (images: string[]) => {
     const collageCanvas = collageCanvasRef.current;
     if (!collageCanvas) return;
 
@@ -236,7 +345,7 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     const photoWidth = 320;
     const photoHeight = 240;
     const padding = 25;
-    const borderWidth = 50;
+    const borderWidth = 60;
     
     collageCanvas.width = photoWidth + borderWidth * 2;
     collageCanvas.height = (photoHeight * 3) + (padding * 2) + borderWidth * 2 + 80;
@@ -246,7 +355,7 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
       'none': ['#E6B3FF', '#FFB3D9', '#B3E0FF'],
       'kawaii-space': ['#E6B3FF', '#FFB3D9', '#B3E0FF'],
       'alien-friends': ['#98FB98', '#B3E0FF', '#E6B3FF'],
-      'starry-dream': ['#FFD700', '#FFB6C1', '#87CEEB'],
+      'starry-dream': ['#FFE4B5', '#FFB6C1', '#B3E0FF'],
       'rocket-bears': ['#FFDAB9', '#FFB6C1', '#E6B3FF'],
     };
     
@@ -259,62 +368,58 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     ctx.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
 
     // Add sparkle pattern to background
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-    for (let i = 0; i < 30; i++) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 50; i++) {
       const x = Math.random() * collageCanvas.width;
       const y = Math.random() * collageCanvas.height;
-      const size = Math.random() * 3 + 1;
+      const size = Math.random() * 2 + 0.5;
       ctx.beginPath();
       ctx.arc(x, y, size, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Load and draw images
-    let loadedCount = 0;
-    const imageElements: HTMLImageElement[] = [];
+    // Load photo images
+    const imageElements: HTMLImageElement[] = await Promise.all(
+      images.slice(0, 3).map(src => {
+        return new Promise<HTMLImageElement>((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.src = src;
+        });
+      })
+    );
 
-    images.slice(0, 3).forEach((src, index) => {
-      const img = new Image();
-      img.onload = () => {
-        loadedCount++;
-        imageElements[index] = img;
-        
-        if (loadedCount === 3) {
-          // Draw all images with frames
-          imageElements.forEach((imgEl, i) => {
-            const x = borderWidth;
-            const y = borderWidth + i * (photoHeight + padding);
-            
-            // Inner frame border (pastel)
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.fillRect(x - 8, y - 8, photoWidth + 16, photoHeight + 16);
-            
-            // White border for each photo
-            ctx.fillStyle = 'white';
-            ctx.fillRect(x - 4, y - 4, photoWidth + 8, photoHeight + 8);
-            
-            // Draw image
-            ctx.drawImage(imgEl, x, y, photoWidth, photoHeight);
-          });
-
-          // Draw stickers based on selected frame
-          drawStickersOnCollage(ctx, collageCanvas.width, collageCanvas.height, borderWidth, photoWidth, photoHeight, padding);
-
-          // Add cute text at bottom
-          ctx.fillStyle = 'white';
-          ctx.strokeStyle = '#9B59B6';
-          ctx.lineWidth = 3;
-          ctx.font = 'bold 18px Arial';
-          ctx.textAlign = 'center';
-          const labelText = getFrameLabel();
-          ctx.strokeText(labelText, collageCanvas.width / 2, collageCanvas.height - 25);
-          ctx.fillText(labelText, collageCanvas.width / 2, collageCanvas.height - 25);
-
-          setCollageImage(collageCanvas.toDataURL('image/png'));
-        }
-      };
-      img.src = src;
+    // Draw all photos with white frames
+    imageElements.forEach((imgEl, i) => {
+      const x = borderWidth;
+      const y = borderWidth + i * (photoHeight + padding);
+      
+      // Inner frame border (pastel)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.fillRect(x - 10, y - 10, photoWidth + 20, photoHeight + 20);
+      
+      // White border for each photo
+      ctx.fillStyle = 'white';
+      ctx.fillRect(x - 5, y - 5, photoWidth + 10, photoHeight + 10);
+      
+      // Draw image
+      ctx.drawImage(imgEl, x, y, photoWidth, photoHeight);
     });
+
+    // Load and draw SVG stickers based on selected frame
+    await drawSvgStickersOnCollage(ctx, collageCanvas.width, collageCanvas.height, borderWidth, photoWidth, photoHeight, padding);
+
+    // Add cute text at bottom
+    ctx.fillStyle = 'white';
+    ctx.strokeStyle = '#9B59B6';
+    ctx.lineWidth = 4;
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'center';
+    const labelText = getFrameLabel();
+    ctx.strokeText(labelText, collageCanvas.width / 2, collageCanvas.height - 25);
+    ctx.fillText(labelText, collageCanvas.width / 2, collageCanvas.height - 25);
+
+    setCollageImage(collageCanvas.toDataURL('image/png'));
   }, [selectedFrame]);
 
   const getFrameLabel = () => {
@@ -327,7 +432,7 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     }
   };
 
-  const drawStickersOnCollage = (
+  const drawSvgStickersOnCollage = async (
     ctx: CanvasRenderingContext2D, 
     canvasWidth: number, 
     canvasHeight: number,
@@ -336,53 +441,91 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     photoHeight: number,
     padding: number
   ) => {
-    // Draw cute emoji stickers around the photos
-    ctx.font = '28px Arial';
+    // Define sticker positions and types for each frame
+    type StickerDef = { svg: string; x: number; y: number; w: number; h: number };
     
-    const stickers: Record<SpaceFrame, string[]> = {
-      'none': ['⭐', '💫', '✨', '💕', '🌟'],
-      'kawaii-space': ['🧑‍🚀', '🪐', '🚀', '⭐', '💕', '✨', '🌙', '💫'],
-      'alien-friends': ['👽', '🛸', '🪐', '⭐', '💚', '✨', '🌟', '💫'],
-      'starry-dream': ['⭐', '🌟', '✨', '💫', '💕', '🌙', '💖', '⭐'],
-      'rocket-bears': ['🧸', '🚀', '⭐', '💕', '✨', '🌟', '💫', '🧸'],
+    const getStickerPositions = (): StickerDef[] => {
+      const ph = photoHeight;
+      const pw = photoWidth;
+      
+      switch (selectedFrame) {
+        case 'kawaii-space':
+          return [
+            // Top area
+            { svg: getSvgAstronaut(), x: 5, y: 8, w: 50, h: 65 },
+            { svg: getSvgPlanet('#E6B3FF'), x: canvasWidth - 55, y: 5, w: 50, h: 50 },
+            { svg: getSvgStar('#FFD700'), x: canvasWidth / 2 - 15, y: 10, w: 30, h: 30 },
+            // Around photo 1
+            { svg: getSvgRocket(), x: canvasWidth - 45, y: borderWidth + ph - 50, w: 35, h: 55 },
+            { svg: getSvgHeart('#FF69B4'), x: 15, y: borderWidth + ph - 30, w: 25, h: 23 },
+            // Around photo 2
+            { svg: getSvgPlanet('#87CEEB'), x: 8, y: borderWidth + ph + padding + 20, w: 40, h: 40 },
+            { svg: getSvgStar('#FFB6C1'), x: canvasWidth - 45, y: borderWidth + ph + padding + ph / 2, w: 35, h: 35 },
+            // Around photo 3
+            { svg: getSvgAstronaut(), x: canvasWidth - 50, y: borderWidth + (ph + padding) * 2 + 10, w: 45, h: 60 },
+            { svg: getSvgRocket(), x: 10, y: borderWidth + (ph + padding) * 2 + ph - 60, w: 35, h: 55 },
+            { svg: getSvgHeart('#FFB6C1'), x: canvasWidth - 40, y: canvasHeight - 75, w: 30, h: 28 },
+            { svg: getSvgStar('#FFD700'), x: 15, y: canvasHeight - 70, w: 28, h: 28 },
+          ];
+        case 'alien-friends':
+          return [
+            { svg: getSvgAlien(), x: 5, y: 5, w: 45, h: 55 },
+            { svg: getSvgPlanet('#98FB98'), x: canvasWidth - 55, y: 5, w: 50, h: 50 },
+            { svg: getSvgAlien(), x: canvasWidth - 50, y: borderWidth + ph - 45, w: 40, h: 50 },
+            { svg: getSvgStar('#FFD700'), x: 15, y: borderWidth + ph + padding + 30, w: 35, h: 35 },
+            { svg: getSvgAlien(), x: 8, y: borderWidth + (ph + padding) * 2 + 20, w: 42, h: 52 },
+            { svg: getSvgPlanet('#B3E0FF'), x: canvasWidth - 50, y: borderWidth + (ph + padding) * 2 + ph - 50, w: 45, h: 45 },
+            { svg: getSvgHeart('#98FB98'), x: canvasWidth / 2 - 15, y: 15, w: 28, h: 26 },
+            { svg: getSvgStar('#FFD700'), x: 15, y: canvasHeight - 70, w: 30, h: 30 },
+            { svg: getSvgAlien(), x: canvasWidth - 50, y: canvasHeight - 80, w: 40, h: 50 },
+          ];
+        case 'starry-dream':
+          return [
+            { svg: getSvgStar('#FFD700'), x: 10, y: 10, w: 45, h: 45 },
+            { svg: getSvgStar('#FFB6C1'), x: canvasWidth - 50, y: 8, w: 42, h: 42 },
+            { svg: getSvgStar('#87CEEB'), x: canvasWidth / 2 - 18, y: 5, w: 36, h: 36 },
+            { svg: getSvgAstronaut(), x: canvasWidth - 50, y: borderWidth + ph - 55, w: 45, h: 58 },
+            { svg: getSvgStar('#E6B3FF'), x: 12, y: borderWidth + ph + padding + 25, w: 38, h: 38 },
+            { svg: getSvgStar('#FFD700'), x: canvasWidth - 48, y: borderWidth + ph + padding + ph / 2, w: 40, h: 40 },
+            { svg: getSvgStar('#FFB6C1'), x: 10, y: borderWidth + (ph + padding) * 2 + 30, w: 42, h: 42 },
+            { svg: getSvgHeart('#FF69B4'), x: canvasWidth - 45, y: borderWidth + (ph + padding) * 2 + ph - 35, w: 35, h: 33 },
+            { svg: getSvgStar('#FFD700'), x: 15, y: canvasHeight - 70, w: 35, h: 35 },
+            { svg: getSvgStar('#87CEEB'), x: canvasWidth - 50, y: canvasHeight - 68, w: 40, h: 40 },
+          ];
+        case 'rocket-bears':
+          return [
+            { svg: getSvgBear(), x: 8, y: 8, w: 48, h: 52 },
+            { svg: getSvgRocket(), x: canvasWidth - 45, y: 5, w: 38, h: 60 },
+            { svg: getSvgHeart('#FF69B4'), x: canvasWidth / 2 - 15, y: 15, w: 28, h: 26 },
+            { svg: getSvgBear(), x: canvasWidth - 52, y: borderWidth + ph - 45, w: 45, h: 50 },
+            { svg: getSvgRocket(), x: 10, y: borderWidth + ph + padding + 15, w: 35, h: 55 },
+            { svg: getSvgStar('#FFD700'), x: canvasWidth - 45, y: borderWidth + ph + padding + ph / 2, w: 35, h: 35 },
+            { svg: getSvgBear(), x: 8, y: borderWidth + (ph + padding) * 2 + 15, w: 45, h: 50 },
+            { svg: getSvgRocket(), x: canvasWidth - 45, y: borderWidth + (ph + padding) * 2 + ph - 60, w: 38, h: 58 },
+            { svg: getSvgBear(), x: 15, y: canvasHeight - 78, w: 42, h: 48 },
+            { svg: getSvgHeart('#FFB6C1'), x: canvasWidth - 45, y: canvasHeight - 65, w: 32, h: 30 },
+          ];
+        default:
+          return [
+            { svg: getSvgStar('#FFD700'), x: 15, y: 15, w: 35, h: 35 },
+            { svg: getSvgStar('#FFB6C1'), x: canvasWidth - 50, y: 15, w: 35, h: 35 },
+            { svg: getSvgHeart('#FF69B4'), x: canvasWidth / 2 - 15, y: 15, w: 28, h: 26 },
+          ];
+      }
     };
-    
-    const frameStickers = stickers[selectedFrame] || stickers['kawaii-space'];
-    
-    // Sticker positions around each photo
-    const positions = [
-      // Around first photo
-      { x: 15, y: borderWidth + 30, emoji: frameStickers[0] },
-      { x: canvasWidth - 40, y: borderWidth + 20, emoji: frameStickers[1] },
-      { x: canvasWidth - 35, y: borderWidth + photoHeight - 20, emoji: frameStickers[2] },
-      
-      // Around second photo  
-      { x: 10, y: borderWidth + photoHeight + padding + 50, emoji: frameStickers[3] },
-      { x: canvasWidth - 40, y: borderWidth + photoHeight + padding + 40, emoji: frameStickers[4] },
-      { x: 15, y: borderWidth + photoHeight + padding + photoHeight - 10, emoji: frameStickers[5] },
-      
-      // Around third photo
-      { x: canvasWidth - 40, y: borderWidth + (photoHeight + padding) * 2 + 30, emoji: frameStickers[6] },
-      { x: 10, y: borderWidth + (photoHeight + padding) * 2 + photoHeight - 20, emoji: frameStickers[7 % frameStickers.length] },
-      { x: canvasWidth - 35, y: borderWidth + (photoHeight + padding) * 2 + photoHeight - 10, emoji: frameStickers[0] },
-      
-      // Extra decorations
-      { x: canvasWidth / 2 - 10, y: 25, emoji: frameStickers[1] },
-      { x: 15, y: canvasHeight - 60, emoji: frameStickers[2] },
-      { x: canvasWidth - 40, y: canvasHeight - 60, emoji: frameStickers[3] },
-    ];
-    
-    positions.forEach(pos => {
-      ctx.fillText(pos.emoji, pos.x, pos.y);
-    });
 
-    // Add small stars scattered
-    ctx.font = '14px Arial';
-    for (let i = 0; i < 8; i++) {
-      const x = Math.random() * (canvasWidth - 30) + 5;
-      const y = Math.random() * (canvasHeight - 80) + 20;
-      ctx.fillText('✦', x, y);
-    }
+    const positions = getStickerPositions();
+    
+    // Load all sticker images
+    const stickerImages = await Promise.all(
+      positions.map(pos => svgToImage(pos.svg))
+    );
+
+    // Draw all stickers
+    stickerImages.forEach((img, i) => {
+      const pos = positions[i];
+      ctx.drawImage(img, pos.x, pos.y, pos.w, pos.h);
+    });
   };
 
   const downloadPhoto = useCallback(() => {
