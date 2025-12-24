@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Plus, List, Heart, Box, Square, Image, Palette, Camera, BarChart3 } from 'lucide-react';
+import { Plus, List, Heart, Box, Square, Image, Palette, Camera, BarChart3, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DownloadPosterButton } from '@/components/DownloadPosterButton';
 import { Memory } from '@/types/memory';
@@ -9,6 +9,7 @@ interface ControlsProps {
   onViewChange: (view: 'constellation' | 'constellation3d' | 'timeline' | 'emotions' | 'stats') => void;
   onAddClick: () => void;
   onPhotoBoothClick: () => void;
+  onGameClick: () => void;
   memoryCount: number;
   hasActiveConstellation: boolean;
   backgroundStyle: 'gradient' | 'nebula';
@@ -22,6 +23,7 @@ export const Controls = ({
   onViewChange, 
   onAddClick, 
   onPhotoBoothClick,
+  onGameClick,
   memoryCount,
   hasActiveConstellation,
   backgroundStyle,
@@ -138,7 +140,18 @@ export const Controls = ({
           size="default"
         >
           <Camera className="w-4 h-4" />
-          <span className="hidden sm:inline">Photo Booth</span>
+          <span className="hidden sm:inline">Photo</span>
+        </Button>
+
+        {/* Game Button */}
+        <Button
+          onClick={onGameClick}
+          variant="outline"
+          className="rounded-full gap-2 border-green-500/50 text-green-300 hover:bg-green-500/20"
+          size="default"
+        >
+          <Gamepad2 className="w-4 h-4" />
+          <span className="hidden sm:inline">Game</span>
         </Button>
 
         {/* Download Poster Button */}

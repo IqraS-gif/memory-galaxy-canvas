@@ -16,6 +16,7 @@ import { CreateConstellationModal } from '@/components/CreateConstellationModal'
 import { EmptyState } from '@/components/EmptyState';
 import { PhotoBooth } from '@/components/PhotoBooth';
 import { StatsView } from '@/components/StatsView';
+import { AsteroidDodgeGame } from '@/components/AsteroidDodgeGame';
 
 const Index = () => {
   const {
@@ -40,6 +41,7 @@ const Index = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isCreateConstellationOpen, setIsCreateConstellationOpen] = useState(false);
   const [isPhotoBoothOpen, setIsPhotoBoothOpen] = useState(false);
+  const [isGameOpen, setIsGameOpen] = useState(false);
 
   const handlePhotoBoothAddToConstellation = (imageUrl: string, mood: Mood) => {
     if (activeConstellationId) {
@@ -145,6 +147,7 @@ const Index = () => {
         onViewChange={setView}
         onAddClick={() => setIsUploadModalOpen(true)}
         onPhotoBoothClick={() => setIsPhotoBoothOpen(true)}
+        onGameClick={() => setIsGameOpen(true)}
         memoryCount={memories.length}
         hasActiveConstellation={!!activeConstellation}
         backgroundStyle={backgroundStyle}
@@ -185,6 +188,12 @@ const Index = () => {
         onClose={() => setIsPhotoBoothOpen(false)}
         onAddToConstellation={handlePhotoBoothAddToConstellation}
         hasActiveConstellation={!!activeConstellation}
+      />
+
+      {/* Asteroid Dodge Game */}
+      <AsteroidDodgeGame
+        isOpen={isGameOpen}
+        onClose={() => setIsGameOpen(false)}
       />
     </div>
   );
