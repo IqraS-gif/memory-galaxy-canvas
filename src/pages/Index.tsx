@@ -97,9 +97,7 @@ const Index = () => {
         ) : view === 'constellation' ? (
           <ConstellationCanvas
             key="constellation"
-            memories={allMemories}
-            constellations={constellations}
-            activeConstellationId={activeConstellationId}
+            memories={memories}
             pattern={pattern}
             groupByMood={false}
             onStarClick={handleStarClick}
