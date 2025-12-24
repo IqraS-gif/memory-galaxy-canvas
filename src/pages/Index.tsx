@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Home } from 'lucide-react';
 import { useConstellations } from '@/hooks/useConstellations';
 import { Memory, Mood } from '@/types/memory';
 import { MemoryModal } from '@/components/MemoryModal';
@@ -17,6 +19,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { PhotoBooth } from '@/components/PhotoBooth';
 import { StatsView } from '@/components/StatsView';
 import { AsteroidDodgeGame } from '@/components/AsteroidDodgeGame';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const {
@@ -85,6 +88,17 @@ const Index = () => {
 
       {/* Ambient sound toggle */}
       <AmbientSound />
+
+      {/* Home button */}
+      <Link to="/" className="fixed top-6 right-6 z-30">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full bg-card/60 backdrop-blur-xl border border-border/50 hover:bg-card/80 hover:border-primary/30 transition-all"
+        >
+          <Home className="w-5 h-5 text-muted-foreground" />
+        </Button>
+      </Link>
 
       {/* Constellation Switcher */}
       <div className="fixed top-6 left-6 z-30">
