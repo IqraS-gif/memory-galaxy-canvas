@@ -19,6 +19,7 @@ const Index = () => {
   const {
     constellations,
     memories,
+    allMemories,
     activeConstellation,
     activeConstellationId,
     setActiveConstellationId,
@@ -28,6 +29,8 @@ const Index = () => {
     addMemory,
     removeMemory,
   } = useConstellations();
+  
+  const [backgroundStyle, setBackgroundStyle] = useState<'gradient' | 'nebula'>('gradient');
 
   const [view, setView] = useState<'constellation' | 'constellation3d' | 'timeline' | 'emotions'>('constellation');
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
@@ -65,7 +68,7 @@ const Index = () => {
   const pattern = activeConstellation?.pattern || 'auto';
 
   return (
-    <div className="fixed inset-0 cosmic-bg overflow-hidden">
+    <div className={`fixed inset-0 overflow-hidden ${backgroundStyle === 'gradient' ? 'cosmic-bg' : 'nebula-bg'}`}>
       {/* Background stars */}
       <BackgroundStars />
 
@@ -94,7 +97,9 @@ const Index = () => {
         ) : view === 'constellation' ? (
           <ConstellationCanvas
             key="constellation"
-            memories={memories}
+            memories={allMemories}
+            constellations={constellations}
+            activeConstellationId={activeConstellationId}
             pattern={pattern}
             groupByMood={false}
             onStarClick={handleStarClick}
@@ -127,6 +132,8 @@ const Index = () => {
         onAddClick={() => setIsUploadModalOpen(true)}
         memoryCount={memories.length}
         hasActiveConstellation={!!activeConstellation}
+        backgroundStyle={backgroundStyle}
+        onBackgroundStyleChange={setBackgroundStyle}
       />
 
       {/* Memory detail modal */}

@@ -101,6 +101,12 @@
       );
   }
 
+  .nebula-bg {
+    background: 
+      url('/src/assets/nebula-bg.png') center center / cover no-repeat,
+      linear-gradient(180deg, hsl(220 55% 6%) 0%, hsl(210 50% 10%) 100%);
+  }
+
   .glass-card {
     @apply bg-card/60 backdrop-blur-xl border border-border/50;
   }

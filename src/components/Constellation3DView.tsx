@@ -18,7 +18,28 @@ const getMoodColor = (mood: Mood): string => {
   }
 };
 
-// 3D Star component
+// Create star shape geometry
+const createStarShape = (innerRadius: number, outerRadius: number, points: number): THREE.Shape => {
+  const shape = new THREE.Shape();
+  const step = Math.PI / points;
+  
+  for (let i = 0; i < points * 2; i++) {
+    const radius = i % 2 === 0 ? outerRadius : innerRadius;
+    const angle = i * step - Math.PI / 2;
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    
+    if (i === 0) {
+      shape.moveTo(x, y);
+    } else {
+      shape.lineTo(x, y);
+    }
+  }
+  shape.closePath();
+  return shape;
+};
+
+// 3D Star component with star shape
 const Star3D = ({ 
   memory, 
   position, 
@@ -32,54 +53,90 @@ const Star3D = ({
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.Mesh>(null);
+  const innerGlowRef = useRef<THREE.Mesh>(null);
   const color = getMoodColor(memory.mood);
+  
+  // Create star geometry
+  const starGeometry = useMemo(() => {
+    const starShape = createStarShape(0.08, 0.2, 5);
+    const extrudeSettings = {
+      depth: 0.05,
+      bevelEnabled: true,
+      bevelThickness: 0.02,
+      bevelSize: 0.02,
+      bevelSegments: 2
+    };
+    return new THREE.ExtrudeGeometry(starShape, extrudeSettings);
+  }, []);
+
+  // Vary star size based on index
+  const scale = 0.8 + (index % 5) * 0.15;
   
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += 0.01;
-      const scale = 1 + Math.sin(state.clock.elapsedTime * 2 + index) * 0.1;
-      meshRef.current.scale.setScalar(scale);
+      meshRef.current.rotation.z += 0.005;
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5 + index) * 0.3;
+      const pulseScale = scale * (1 + Math.sin(state.clock.elapsedTime * 2 + index) * 0.1);
+      meshRef.current.scale.setScalar(pulseScale);
     }
     if (glowRef.current) {
-      const glowScale = 1.5 + Math.sin(state.clock.elapsedTime * 1.5 + index) * 0.3;
+      const glowScale = 2 + Math.sin(state.clock.elapsedTime * 1.5 + index) * 0.4;
       glowRef.current.scale.setScalar(glowScale);
+    }
+    if (innerGlowRef.current) {
+      const innerScale = 1.3 + Math.sin(state.clock.elapsedTime * 3 + index) * 0.2;
+      innerGlowRef.current.scale.setScalar(innerScale);
     }
   });
 
   return (
     <group position={position}>
-      {/* Glow sphere */}
+      {/* Outer glow sphere */}
       <mesh ref={glowRef}>
-        <sphereGeometry args={[0.3, 16, 16]} />
-        <meshBasicMaterial color={color} transparent opacity={0.2} />
+        <sphereGeometry args={[0.25, 16, 16]} />
+        <meshBasicMaterial color={color} transparent opacity={0.1} />
       </mesh>
       
-      {/* Main star */}
+      {/* Inner glow sphere */}
+      <mesh ref={innerGlowRef}>
+        <sphereGeometry args={[0.15, 16, 16]} />
+        <meshBasicMaterial color={color} transparent opacity={0.25} />
+      </mesh>
+      
+      {/* Main star shape */}
       <mesh 
         ref={meshRef} 
+        geometry={starGeometry}
         onClick={(e) => {
           e.stopPropagation();
           onClick();
         }}
       >
-        <dodecahedronGeometry args={[0.15, 0]} />
         <meshStandardMaterial 
           color={color} 
           emissive={color}
-          emissiveIntensity={0.8}
+          emissiveIntensity={1.2}
+          metalness={0.8}
+          roughness={0.2}
         />
+      </mesh>
+      
+      {/* Bright core point */}
+      <mesh>
+        <sphereGeometry args={[0.03, 8, 8]} />
+        <meshBasicMaterial color="#FFFFFF" />
       </mesh>
       
       {/* Label */}
       <Html
-        position={[0, 0.5, 0]}
+        position={[0, 0.6, 0]}
         center
         style={{
           pointerEvents: 'none',
           whiteSpace: 'nowrap',
         }}
       >
-        <div className="px-2 py-1 bg-background/80 backdrop-blur-sm rounded text-xs text-foreground border border-border/50">
+        <div className="px-2 py-1 bg-background/80 backdrop-blur-sm rounded text-xs text-foreground border border-border/50 shadow-lg">
           {memory.title}
         </div>
       </Html>
@@ -87,8 +144,8 @@ const Star3D = ({
   );
 };
 
-// Constellation lines
-const ConstellationLines = ({ memories }: { memories: Memory[] }) => {
+// Constellation lines with gradient effect
+const ConstellationLines3D = ({ memories }: { memories: Memory[] }) => {
   const sortedMemories = useMemo(() => 
     [...memories].sort((a, b) => 
       new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -111,32 +168,47 @@ const ConstellationLines = ({ memories }: { memories: Memory[] }) => {
           key={i}
           points={[pos, positions[i + 1]]}
           color={getMoodColor(sortedMemories[i].mood)}
-          lineWidth={2}
+          lineWidth={3}
           transparent
-          opacity={0.6}
+          opacity={0.7}
         />
       ))}
     </>
   );
 };
 
-// Floating particles
+// Enhanced floating particles
 const Particles = () => {
   const particlesRef = useRef<THREE.Points>(null);
   
-  const particles = useMemo(() => {
-    const positions = new Float32Array(500 * 3);
-    for (let i = 0; i < 500; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+  const { positions, colors } = useMemo(() => {
+    const positions = new Float32Array(800 * 3);
+    const colors = new Float32Array(800 * 3);
+    
+    for (let i = 0; i < 800; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 25;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 25;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 25;
+      
+      // Random colors: blue, cyan, purple, white
+      const colorChoice = Math.random();
+      if (colorChoice < 0.3) {
+        colors[i * 3] = 0.3; colors[i * 3 + 1] = 0.6; colors[i * 3 + 2] = 1.0;
+      } else if (colorChoice < 0.5) {
+        colors[i * 3] = 0.0; colors[i * 3 + 1] = 0.8; colors[i * 3 + 2] = 1.0;
+      } else if (colorChoice < 0.7) {
+        colors[i * 3] = 0.7; colors[i * 3 + 1] = 0.4; colors[i * 3 + 2] = 0.9;
+      } else {
+        colors[i * 3] = 1.0; colors[i * 3 + 1] = 1.0; colors[i * 3 + 2] = 1.0;
+      }
     }
-    return positions;
+    return { positions, colors };
   }, []);
 
   useFrame((state) => {
     if (particlesRef.current) {
-      particlesRef.current.rotation.y = state.clock.elapsedTime * 0.02;
+      particlesRef.current.rotation.y = state.clock.elapsedTime * 0.015;
+      particlesRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.01) * 0.1;
     }
   });
 
@@ -145,17 +217,43 @@ const Particles = () => {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          args={[particles, 3]}
+          args={[positions, 3]}
+        />
+        <bufferAttribute
+          attach="attributes-color"
+          args={[colors, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.02}
-        color="#88ccff"
+        size={0.04}
+        vertexColors
         transparent
-        opacity={0.6}
+        opacity={0.8}
         sizeAttenuation
       />
     </points>
+  );
+};
+
+// Nebula cloud effect
+const NebulaCloud = () => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.z = state.clock.elapsedTime * 0.02;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} position={[0, 0, -10]}>
+      <planeGeometry args={[40, 40]} />
+      <meshBasicMaterial 
+        color="#1a3a5c" 
+        transparent 
+        opacity={0.3}
+      />
+    </mesh>
   );
 };
 
@@ -174,26 +272,30 @@ export const Constellation3DView = ({ memories, onStarClick }: Constellation3DVi
         camera={{ position: [0, 0, 8], fov: 60 }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={0.8} />
-        <pointLight position={[-10, -10, -10]} intensity={0.4} color="#4488ff" />
+        <ambientLight intensity={0.4} />
+        <pointLight position={[10, 10, 10]} intensity={1} color="#ffffff" />
+        <pointLight position={[-10, -10, -10]} intensity={0.6} color="#4488ff" />
+        <pointLight position={[0, 10, -5]} intensity={0.4} color="#aa66ff" />
         
         {/* Background stars */}
         <Stars 
           radius={100} 
           depth={50} 
-          count={3000} 
-          factor={4} 
-          saturation={0.5} 
+          count={5000} 
+          factor={5} 
+          saturation={0.8} 
           fade 
-          speed={0.5}
+          speed={0.3}
         />
+        
+        {/* Nebula effect */}
+        <NebulaCloud />
         
         {/* Floating particles */}
         <Particles />
         
         {/* Constellation lines */}
-        <ConstellationLines memories={memories} />
+        <ConstellationLines3D memories={memories} />
         
         {/* Memory stars */}
         {memories.map((memory, index) => (
@@ -212,9 +314,11 @@ export const Constellation3DView = ({ memories, onStarClick }: Constellation3DVi
           enableZoom={true}
           enableRotate={true}
           minDistance={3}
-          maxDistance={20}
+          maxDistance={25}
           autoRotate
-          autoRotateSpeed={0.3}
+          autoRotateSpeed={0.2}
+          dampingFactor={0.05}
+          enableDamping
         />
       </Canvas>
     </div>
