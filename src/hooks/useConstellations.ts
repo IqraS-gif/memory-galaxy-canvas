@@ -82,25 +82,139 @@ const clearCorruptedData = () => {
 // Initialize
 clearCorruptedData();
 
+// Default constellations with sample data
+const DEFAULT_CONSTELLATIONS: Constellation[] = [
+  {
+    id: 'beach-2025',
+    name: 'Beach 2025',
+    pattern: 'aquarius',
+    createdAt: new Date('2025-01-15'),
+  },
+  {
+    id: 'friendship-day-2025',
+    name: 'Friendship Day 2025',
+    pattern: 'gemini',
+    createdAt: new Date('2025-08-03'),
+  },
+];
+
+const DEFAULT_MEMORIES: Memory[] = [
+  // Beach 2025 memories
+  {
+    id: 'beach-1',
+    title: 'Sunrise at the shore',
+    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop',
+    mood: 'calm',
+    createdAt: new Date('2025-01-15T06:30:00'),
+    position: { x: 25, y: 30 },
+    constellationId: 'beach-2025',
+  },
+  {
+    id: 'beach-2',
+    title: 'Beach bonfire night',
+    imageUrl: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=400&h=300&fit=crop',
+    mood: 'happy',
+    createdAt: new Date('2025-01-15T20:00:00'),
+    position: { x: 55, y: 25 },
+    constellationId: 'beach-2025',
+  },
+  {
+    id: 'beach-3',
+    title: 'Sandcastle memories',
+    imageUrl: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=400&h=300&fit=crop',
+    mood: 'nostalgic',
+    createdAt: new Date('2025-01-16T14:00:00'),
+    position: { x: 40, y: 55 },
+    constellationId: 'beach-2025',
+  },
+  {
+    id: 'beach-4',
+    title: 'Ocean waves',
+    imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400&h=300&fit=crop',
+    mood: 'calm',
+    createdAt: new Date('2025-01-16T10:00:00'),
+    position: { x: 70, y: 45 },
+    constellationId: 'beach-2025',
+  },
+  {
+    id: 'beach-5',
+    title: 'Sunset paradise',
+    imageUrl: 'https://images.unsplash.com/photo-1414609245224-afa02bfb3fda?w=400&h=300&fit=crop',
+    mood: 'happy',
+    createdAt: new Date('2025-01-17T18:30:00'),
+    position: { x: 30, y: 70 },
+    constellationId: 'beach-2025',
+  },
+  // Friendship Day 2025 memories
+  {
+    id: 'friends-1',
+    title: 'Best friends forever',
+    imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop',
+    mood: 'happy',
+    createdAt: new Date('2025-08-03T12:00:00'),
+    position: { x: 35, y: 25 },
+    constellationId: 'friendship-day-2025',
+  },
+  {
+    id: 'friends-2',
+    title: 'Squad goals',
+    imageUrl: 'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?w=400&h=300&fit=crop',
+    mood: 'happy',
+    createdAt: new Date('2025-08-03T14:00:00'),
+    position: { x: 60, y: 35 },
+    constellationId: 'friendship-day-2025',
+  },
+  {
+    id: 'friends-3',
+    title: 'Coffee and laughs',
+    imageUrl: 'https://images.unsplash.com/photo-1543807535-eceef0bc6599?w=400&h=300&fit=crop',
+    mood: 'calm',
+    createdAt: new Date('2025-08-03T16:00:00'),
+    position: { x: 45, y: 55 },
+    constellationId: 'friendship-day-2025',
+  },
+  {
+    id: 'friends-4',
+    title: 'Old memories',
+    imageUrl: 'https://images.unsplash.com/photo-1524601500432-1e1a4c71d692?w=400&h=300&fit=crop',
+    mood: 'nostalgic',
+    createdAt: new Date('2025-08-03T18:00:00'),
+    position: { x: 25, y: 65 },
+    constellationId: 'friendship-day-2025',
+  },
+  {
+    id: 'friends-5',
+    title: 'Party time!',
+    imageUrl: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400&h=300&fit=crop',
+    mood: 'happy',
+    createdAt: new Date('2025-08-03T21:00:00'),
+    position: { x: 70, y: 60 },
+    constellationId: 'friendship-day-2025',
+  },
+];
+
 export const useConstellations = () => {
   const [constellations, setConstellations] = useState<Constellation[]>([]);
   const [memories, setMemories] = useState<Memory[]>([]);
   const [activeConstellationId, setActiveConstellationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load from localStorage
+  // Load from localStorage or use defaults
   useEffect(() => {
     const storedConstellations = localStorage.getItem(CONSTELLATIONS_KEY);
     const storedMemories = localStorage.getItem(MEMORIES_KEY);
     const storedActiveId = localStorage.getItem(ACTIVE_CONSTELLATION_KEY);
     
+    let loadedConstellations: Constellation[] = [];
+    let loadedMemories: Memory[] = [];
+    
     if (storedConstellations) {
       try {
         const parsed = JSON.parse(storedConstellations);
-        setConstellations(parsed.map((c: any) => ({
+        loadedConstellations = parsed.map((c: any) => ({
           ...c,
           createdAt: new Date(c.createdAt),
-        })));
+        }));
       } catch (e) {
         console.error('Failed to parse constellations:', e);
         localStorage.removeItem(CONSTELLATIONS_KEY);
@@ -110,18 +224,37 @@ export const useConstellations = () => {
     if (storedMemories) {
       try {
         const parsed = JSON.parse(storedMemories);
-        setMemories(parsed.map((m: any) => ({
+        loadedMemories = parsed.map((m: any) => ({
           ...m,
           createdAt: new Date(m.createdAt),
-        })));
+        }));
       } catch (e) {
         console.error('Failed to parse memories:', e);
         localStorage.removeItem(MEMORIES_KEY);
       }
     }
     
-    if (storedActiveId) {
+    // Add default constellations if they don't exist
+    const hasBeach = loadedConstellations.some(c => c.id === 'beach-2025');
+    const hasFriendship = loadedConstellations.some(c => c.id === 'friendship-day-2025');
+    
+    if (!hasBeach) {
+      loadedConstellations.push(DEFAULT_CONSTELLATIONS[0]);
+      loadedMemories.push(...DEFAULT_MEMORIES.filter(m => m.constellationId === 'beach-2025'));
+    }
+    
+    if (!hasFriendship) {
+      loadedConstellations.push(DEFAULT_CONSTELLATIONS[1]);
+      loadedMemories.push(...DEFAULT_MEMORIES.filter(m => m.constellationId === 'friendship-day-2025'));
+    }
+    
+    setConstellations(loadedConstellations);
+    setMemories(loadedMemories);
+    
+    if (storedActiveId && loadedConstellations.some(c => c.id === storedActiveId)) {
       setActiveConstellationId(storedActiveId);
+    } else if (loadedConstellations.length > 0) {
+      setActiveConstellationId(loadedConstellations[0].id);
     }
     
     setIsLoading(false);
