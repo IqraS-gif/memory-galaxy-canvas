@@ -233,21 +233,41 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     if (!ctx) return;
 
     // Set collage size (portrait strip like photo booth)
-    const photoWidth = 300;
-    const photoHeight = 225;
-    const padding = 20;
-    const borderWidth = 40;
+    const photoWidth = 320;
+    const photoHeight = 240;
+    const padding = 25;
+    const borderWidth = 50;
     
     collageCanvas.width = photoWidth + borderWidth * 2;
-    collageCanvas.height = (photoHeight * 3) + (padding * 2) + borderWidth * 2 + 60;
+    collageCanvas.height = (photoHeight * 3) + (padding * 2) + borderWidth * 2 + 80;
 
-    // Create pastel gradient background
+    // Create pastel gradient background based on selected frame
+    const gradients: Record<SpaceFrame, [string, string, string]> = {
+      'none': ['#E6B3FF', '#FFB3D9', '#B3E0FF'],
+      'kawaii-space': ['#E6B3FF', '#FFB3D9', '#B3E0FF'],
+      'alien-friends': ['#98FB98', '#B3E0FF', '#E6B3FF'],
+      'starry-dream': ['#FFD700', '#FFB6C1', '#87CEEB'],
+      'rocket-bears': ['#FFDAB9', '#FFB6C1', '#E6B3FF'],
+    };
+    
+    const colors = gradients[selectedFrame] || gradients['kawaii-space'];
     const gradient = ctx.createLinearGradient(0, 0, collageCanvas.width, collageCanvas.height);
-    gradient.addColorStop(0, '#E6B3FF');
-    gradient.addColorStop(0.5, '#FFB3D9');
-    gradient.addColorStop(1, '#B3E0FF');
+    gradient.addColorStop(0, colors[0]);
+    gradient.addColorStop(0.5, colors[1]);
+    gradient.addColorStop(1, colors[2]);
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
+
+    // Add sparkle pattern to background
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    for (let i = 0; i < 30; i++) {
+      const x = Math.random() * collageCanvas.width;
+      const y = Math.random() * collageCanvas.height;
+      const size = Math.random() * 3 + 1;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     // Load and draw images
     let loadedCount = 0;
@@ -260,10 +280,14 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
         imageElements[index] = img;
         
         if (loadedCount === 3) {
-          // Draw all images
+          // Draw all images with frames
           imageElements.forEach((imgEl, i) => {
             const x = borderWidth;
             const y = borderWidth + i * (photoHeight + padding);
+            
+            // Inner frame border (pastel)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fillRect(x - 8, y - 8, photoWidth + 16, photoHeight + 16);
             
             // White border for each photo
             ctx.fillStyle = 'white';
@@ -273,18 +297,93 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
             ctx.drawImage(imgEl, x, y, photoWidth, photoHeight);
           });
 
+          // Draw stickers based on selected frame
+          drawStickersOnCollage(ctx, collageCanvas.width, collageCanvas.height, borderWidth, photoWidth, photoHeight, padding);
+
           // Add cute text at bottom
-          ctx.fillStyle = '#9B59B6';
-          ctx.font = 'bold 16px Arial';
+          ctx.fillStyle = 'white';
+          ctx.strokeStyle = '#9B59B6';
+          ctx.lineWidth = 3;
+          ctx.font = 'bold 18px Arial';
           ctx.textAlign = 'center';
-          ctx.fillText('✨ CUTE SPACE BOOTH ✨', collageCanvas.width / 2, collageCanvas.height - 20);
+          const labelText = getFrameLabel();
+          ctx.strokeText(labelText, collageCanvas.width / 2, collageCanvas.height - 25);
+          ctx.fillText(labelText, collageCanvas.width / 2, collageCanvas.height - 25);
 
           setCollageImage(collageCanvas.toDataURL('image/png'));
         }
       };
       img.src = src;
     });
-  }, []);
+  }, [selectedFrame]);
+
+  const getFrameLabel = () => {
+    switch (selectedFrame) {
+      case 'kawaii-space': return '✨ CUTE SPACE BOOTH ✨';
+      case 'alien-friends': return '👽 ALIEN FRIENDS 👽';
+      case 'starry-dream': return '⭐ STARRY DREAM ⭐';
+      case 'rocket-bears': return '🧸 ROCKET BEARS 🚀';
+      default: return '✨ SPACE BOOTH ✨';
+    }
+  };
+
+  const drawStickersOnCollage = (
+    ctx: CanvasRenderingContext2D, 
+    canvasWidth: number, 
+    canvasHeight: number,
+    borderWidth: number,
+    photoWidth: number,
+    photoHeight: number,
+    padding: number
+  ) => {
+    // Draw cute emoji stickers around the photos
+    ctx.font = '28px Arial';
+    
+    const stickers: Record<SpaceFrame, string[]> = {
+      'none': ['⭐', '💫', '✨', '💕', '🌟'],
+      'kawaii-space': ['🧑‍🚀', '🪐', '🚀', '⭐', '💕', '✨', '🌙', '💫'],
+      'alien-friends': ['👽', '🛸', '🪐', '⭐', '💚', '✨', '🌟', '💫'],
+      'starry-dream': ['⭐', '🌟', '✨', '💫', '💕', '🌙', '💖', '⭐'],
+      'rocket-bears': ['🧸', '🚀', '⭐', '💕', '✨', '🌟', '💫', '🧸'],
+    };
+    
+    const frameStickers = stickers[selectedFrame] || stickers['kawaii-space'];
+    
+    // Sticker positions around each photo
+    const positions = [
+      // Around first photo
+      { x: 15, y: borderWidth + 30, emoji: frameStickers[0] },
+      { x: canvasWidth - 40, y: borderWidth + 20, emoji: frameStickers[1] },
+      { x: canvasWidth - 35, y: borderWidth + photoHeight - 20, emoji: frameStickers[2] },
+      
+      // Around second photo  
+      { x: 10, y: borderWidth + photoHeight + padding + 50, emoji: frameStickers[3] },
+      { x: canvasWidth - 40, y: borderWidth + photoHeight + padding + 40, emoji: frameStickers[4] },
+      { x: 15, y: borderWidth + photoHeight + padding + photoHeight - 10, emoji: frameStickers[5] },
+      
+      // Around third photo
+      { x: canvasWidth - 40, y: borderWidth + (photoHeight + padding) * 2 + 30, emoji: frameStickers[6] },
+      { x: 10, y: borderWidth + (photoHeight + padding) * 2 + photoHeight - 20, emoji: frameStickers[7 % frameStickers.length] },
+      { x: canvasWidth - 35, y: borderWidth + (photoHeight + padding) * 2 + photoHeight - 10, emoji: frameStickers[0] },
+      
+      // Extra decorations
+      { x: canvasWidth / 2 - 10, y: 25, emoji: frameStickers[1] },
+      { x: 15, y: canvasHeight - 60, emoji: frameStickers[2] },
+      { x: canvasWidth - 40, y: canvasHeight - 60, emoji: frameStickers[3] },
+    ];
+    
+    positions.forEach(pos => {
+      ctx.fillText(pos.emoji, pos.x, pos.y);
+    });
+
+    // Add small stars scattered
+    ctx.font = '14px Arial';
+    for (let i = 0; i < 8; i++) {
+      const x = Math.random() * (canvasWidth - 30) + 5;
+      const y = Math.random() * (canvasHeight - 80) + 20;
+      ctx.fillText('✦', x, y);
+    }
+  };
 
   const downloadPhoto = useCallback(() => {
     const imageToDownload = collageImage || (capturedImages.length > 0 ? capturedImages[capturedImages.length - 1] : null);
