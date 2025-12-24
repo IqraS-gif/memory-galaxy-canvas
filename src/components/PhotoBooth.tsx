@@ -286,7 +286,7 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     return () => stopCamera();
   }, [isOpen]);
 
-  const capturePhoto = useCallback(() => {
+  const capturePhoto = useCallback(async () => {
     if (collageImage) return; // Already have collage
     
     setCountdown(3);
@@ -294,9 +294,9 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
       setCountdown(prev => {
         if (prev === 1) {
           clearInterval(interval);
-          setTimeout(() => {
+          setTimeout(async () => {
             setIsCapturing(true);
-            setTimeout(() => {
+            setTimeout(async () => {
               if (videoRef.current && canvasRef.current) {
                 const canvas = canvasRef.current;
                 const video = videoRef.current;
@@ -309,9 +309,12 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
                   if (filter?.style) {
                     ctx.filter = filter.style;
                   }
-                  // Draw without flip for saved image
+                  // Draw video frame
                   ctx.drawImage(video, 0, 0);
                   ctx.filter = 'none';
+                  
+                  // Draw frame overlay on the captured photo
+                  await drawFrameOnCanvas(ctx, canvas.width, canvas.height);
                   
                   const newImage = canvas.toDataURL('image/png');
                   const newImages = [...capturedImages, newImage];
@@ -332,7 +335,124 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
         return prev ? prev - 1 : null;
       });
     }, 1000);
-  }, [selectedFilter, capturedImages, collageImage]);
+  }, [selectedFilter, capturedImages, collageImage, selectedFrame]);
+
+  // Draw the selected frame overlay onto a canvas
+  const drawFrameOnCanvas = async (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    if (selectedFrame === 'none') return;
+
+    type StickerDef = { svg: string; x: number; y: number; w: number; h: number };
+    
+    const getFrameStickerPositions = (): StickerDef[] => {
+      // Scale positions based on canvas size
+      const scaleX = width / 640;
+      const scaleY = height / 480;
+      
+      switch (selectedFrame) {
+        case 'kawaii-space':
+          return [
+            { svg: getSvgAstronaut(), x: 10 * scaleX, y: 10 * scaleY, w: 60 * scaleX, h: 75 * scaleY },
+            { svg: getSvgPlanet('#E6B3FF'), x: (width - 70 * scaleX), y: 10 * scaleY, w: 55 * scaleX, h: 55 * scaleY },
+            { svg: getSvgPlanet('#87CEEB'), x: 15 * scaleX, y: (height - 90 * scaleY), w: 45 * scaleX, h: 45 * scaleY },
+            { svg: getSvgRocket(), x: (width - 55 * scaleX), y: (height - 100 * scaleY), w: 45 * scaleX, h: 70 * scaleY },
+            { svg: getSvgStar('#FFD700'), x: (width - 80 * scaleX), y: 100 * scaleY, w: 35 * scaleX, h: 35 * scaleY },
+            { svg: getSvgStar('#FFB6C1'), x: 15 * scaleX, y: (height / 2), w: 30 * scaleX, h: 30 * scaleY },
+            { svg: getSvgHeart('#FF69B4'), x: (width / 3), y: 15 * scaleY, w: 30 * scaleX, h: 28 * scaleY },
+            { svg: getSvgHeart('#FFB6C1'), x: (width - 100 * scaleX), y: (height - 150 * scaleY), w: 25 * scaleX, h: 23 * scaleY },
+          ];
+        case 'alien-friends':
+          return [
+            { svg: getSvgAlien(), x: 10 * scaleX, y: 10 * scaleY, w: 55 * scaleX, h: 65 * scaleY },
+            { svg: getSvgAlien(), x: (width - 65 * scaleX), y: 10 * scaleY, w: 50 * scaleX, h: 60 * scaleY },
+            { svg: getSvgAlien(), x: 15 * scaleX, y: (height - 85 * scaleY), w: 45 * scaleX, h: 55 * scaleY },
+            { svg: getSvgPlanet('#98FB98'), x: (width - 70 * scaleX), y: 120 * scaleY, w: 50 * scaleX, h: 50 * scaleY },
+            { svg: getSvgPlanet('#B3E0FF'), x: 10 * scaleX, y: (height / 2 - 30 * scaleY), w: 45 * scaleX, h: 45 * scaleY },
+            { svg: getSvgStar('#FFD700'), x: (width / 3), y: 20 * scaleY, w: 30 * scaleX, h: 30 * scaleY },
+            { svg: getSvgStar('#FFD700'), x: (width - 90 * scaleX), y: (height - 70 * scaleY), w: 35 * scaleX, h: 35 * scaleY },
+            { svg: getSvgHeart('#98FB98'), x: (width / 2 - 15 * scaleX), y: (height - 50 * scaleY), w: 28 * scaleX, h: 26 * scaleY },
+          ];
+        case 'starry-dream':
+          return [
+            { svg: getSvgStar('#FFD700'), x: 10 * scaleX, y: 10 * scaleY, w: 50 * scaleX, h: 50 * scaleY },
+            { svg: getSvgStar('#FFB6C1'), x: (width - 60 * scaleX), y: 15 * scaleY, w: 50 * scaleX, h: 50 * scaleY },
+            { svg: getSvgStar('#87CEEB'), x: 15 * scaleX, y: (height - 70 * scaleY), w: 45 * scaleX, h: 45 * scaleY },
+            { svg: getSvgStar('#FFD700'), x: (width - 60 * scaleX), y: (height - 65 * scaleY), w: 50 * scaleX, h: 50 * scaleY },
+            { svg: getSvgStar('#E6B3FF'), x: 10 * scaleX, y: (height / 2), w: 40 * scaleX, h: 40 * scaleY },
+            { svg: getSvgStar('#FFB6C1'), x: (width - 55 * scaleX), y: (height / 2 - 20 * scaleY), w: 40 * scaleX, h: 40 * scaleY },
+            { svg: getSvgStar('#FFD700'), x: (width / 3 - 20 * scaleX), y: (height - 60 * scaleY), w: 35 * scaleX, h: 35 * scaleY },
+            { svg: getSvgHeart('#FF69B4'), x: (width / 2), y: 20 * scaleY, w: 30 * scaleX, h: 28 * scaleY },
+            { svg: getSvgHeart('#FFB6C1'), x: (width - 100 * scaleX), y: (height - 130 * scaleY), w: 28 * scaleX, h: 26 * scaleY },
+            { svg: getSvgAstronaut(), x: (width - 70 * scaleX), y: (height - 180 * scaleY), w: 55 * scaleX, h: 70 * scaleY },
+          ];
+        case 'rocket-bears':
+          return [
+            { svg: getSvgBear(), x: 10 * scaleX, y: 10 * scaleY, w: 55 * scaleX, h: 60 * scaleY },
+            { svg: getSvgBear(), x: (width - 65 * scaleX), y: 15 * scaleY, w: 50 * scaleX, h: 55 * scaleY },
+            { svg: getSvgBear(), x: 15 * scaleX, y: (height - 80 * scaleY), w: 50 * scaleX, h: 55 * scaleY },
+            { svg: getSvgRocket(), x: (width - 55 * scaleX), y: 100 * scaleY, w: 40 * scaleX, h: 65 * scaleY },
+            { svg: getSvgRocket(), x: (width - 55 * scaleX), y: (height - 100 * scaleY), w: 40 * scaleX, h: 65 * scaleY },
+            { svg: getSvgRocket(), x: 15 * scaleX, y: (height / 2 - 30 * scaleY), w: 35 * scaleX, h: 55 * scaleY },
+            { svg: getSvgStar('#FFD700'), x: (width / 3), y: 25 * scaleY, w: 30 * scaleX, h: 30 * scaleY },
+            { svg: getSvgHeart('#FF69B4'), x: (width / 2 + 20 * scaleX), y: (height - 55 * scaleY), w: 30 * scaleX, h: 28 * scaleY },
+            { svg: getSvgHeart('#FFB6C1'), x: (width - 100 * scaleX), y: (height - 160 * scaleY), w: 28 * scaleX, h: 26 * scaleY },
+          ];
+        default:
+          return [];
+      }
+    };
+
+    // Draw pastel border
+    const borderWidth = 16;
+    const borderColors: Record<SpaceFrame, [string, string, string]> = {
+      'none': ['#E6B3FF', '#FFB3D9', '#B3E0FF'],
+      'kawaii-space': ['#E6B3FF', '#FFB3D9', '#B3E0FF'],
+      'alien-friends': ['#98FB98', '#B3E0FF', '#E6B3FF'],
+      'starry-dream': ['#FFD700', '#FFB6C1', '#87CEEB'],
+      'rocket-bears': ['#D2691E', '#FFB6C1', '#FF6B6B'],
+    };
+    
+    const colors = borderColors[selectedFrame];
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, colors[0]);
+    gradient.addColorStop(0.5, colors[1]);
+    gradient.addColorStop(1, colors[2]);
+    
+    // Draw border (outside frame)
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = borderWidth;
+    ctx.strokeRect(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth);
+    
+    // Inner white glow
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(borderWidth + 2, borderWidth + 2, width - borderWidth * 2 - 4, height - borderWidth * 2 - 4);
+
+    const positions = getFrameStickerPositions();
+    
+    // Load and draw all stickers
+    const stickerImages = await Promise.all(
+      positions.map(pos => svgToImage(pos.svg))
+    );
+
+    stickerImages.forEach((img, i) => {
+      const pos = positions[i];
+      ctx.drawImage(img, pos.x, pos.y, pos.w, pos.h);
+    });
+
+    // Draw bottom label
+    const labelY = height - 25;
+    ctx.fillStyle = 'rgba(255, 182, 193, 0.8)';
+    const labelWidth = 180;
+    const labelHeight = 28;
+    ctx.beginPath();
+    ctx.roundRect(width / 2 - labelWidth / 2, labelY - labelHeight / 2 - 5, labelWidth, labelHeight, 14);
+    ctx.fill();
+    
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(getFrameLabel(), width / 2, labelY + 3);
+  };
 
   const createCollage = useCallback(async (images: string[]) => {
     const collageCanvas = collageCanvasRef.current;
@@ -341,14 +461,14 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     const ctx = collageCanvas.getContext('2d');
     if (!ctx) return;
 
-    // Set collage size (portrait strip like photo booth)
+    // Set collage size - photos already have frames baked in
     const photoWidth = 320;
     const photoHeight = 240;
-    const padding = 25;
-    const borderWidth = 60;
+    const padding = 15;
+    const borderWidth = 30;
     
     collageCanvas.width = photoWidth + borderWidth * 2;
-    collageCanvas.height = (photoHeight * 3) + (padding * 2) + borderWidth * 2 + 80;
+    collageCanvas.height = (photoHeight * 3) + (padding * 2) + borderWidth * 2 + 50;
 
     // Create pastel gradient background based on selected frame
     const gradients: Record<SpaceFrame, [string, string, string]> = {
@@ -368,8 +488,8 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     ctx.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
 
     // Add sparkle pattern to background
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-    for (let i = 0; i < 50; i++) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    for (let i = 0; i < 60; i++) {
       const x = Math.random() * collageCanvas.width;
       const y = Math.random() * collageCanvas.height;
       const size = Math.random() * 2 + 0.5;
@@ -378,7 +498,7 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
       ctx.fill();
     }
 
-    // Load photo images
+    // Load photo images (they already have frames baked in)
     const imageElements: HTMLImageElement[] = await Promise.all(
       images.slice(0, 3).map(src => {
         return new Promise<HTMLImageElement>((resolve) => {
@@ -389,35 +509,27 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
       })
     );
 
-    // Draw all photos with white frames
+    // Draw all photos - frames are already part of the images
     imageElements.forEach((imgEl, i) => {
       const x = borderWidth;
       const y = borderWidth + i * (photoHeight + padding);
       
-      // Inner frame border (pastel)
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-      ctx.fillRect(x - 10, y - 10, photoWidth + 20, photoHeight + 20);
-      
-      // White border for each photo
-      ctx.fillStyle = 'white';
-      ctx.fillRect(x - 5, y - 5, photoWidth + 10, photoHeight + 10);
-      
-      // Draw image
+      // Draw image (frame is already baked in)
       ctx.drawImage(imgEl, x, y, photoWidth, photoHeight);
     });
 
-    // Load and draw SVG stickers based on selected frame
-    await drawSvgStickersOnCollage(ctx, collageCanvas.width, collageCanvas.height, borderWidth, photoWidth, photoHeight, padding);
-
     // Add cute text at bottom
+    ctx.fillStyle = 'rgba(255, 182, 193, 0.9)';
+    const labelWidth = 200;
+    const labelHeight = 30;
+    ctx.beginPath();
+    ctx.roundRect(collageCanvas.width / 2 - labelWidth / 2, collageCanvas.height - 45, labelWidth, labelHeight, 15);
+    ctx.fill();
+    
     ctx.fillStyle = 'white';
-    ctx.strokeStyle = '#9B59B6';
-    ctx.lineWidth = 4;
-    ctx.font = 'bold 20px Arial';
+    ctx.font = 'bold 14px Arial';
     ctx.textAlign = 'center';
-    const labelText = getFrameLabel();
-    ctx.strokeText(labelText, collageCanvas.width / 2, collageCanvas.height - 25);
-    ctx.fillText(labelText, collageCanvas.width / 2, collageCanvas.height - 25);
+    ctx.fillText(getFrameLabel(), collageCanvas.width / 2, collageCanvas.height - 25);
 
     setCollageImage(collageCanvas.toDataURL('image/png'));
   }, [selectedFrame]);
@@ -432,101 +544,6 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
     }
   };
 
-  const drawSvgStickersOnCollage = async (
-    ctx: CanvasRenderingContext2D, 
-    canvasWidth: number, 
-    canvasHeight: number,
-    borderWidth: number,
-    photoWidth: number,
-    photoHeight: number,
-    padding: number
-  ) => {
-    // Define sticker positions and types for each frame
-    type StickerDef = { svg: string; x: number; y: number; w: number; h: number };
-    
-    const getStickerPositions = (): StickerDef[] => {
-      const ph = photoHeight;
-      const pw = photoWidth;
-      
-      switch (selectedFrame) {
-        case 'kawaii-space':
-          return [
-            // Top area
-            { svg: getSvgAstronaut(), x: 5, y: 8, w: 50, h: 65 },
-            { svg: getSvgPlanet('#E6B3FF'), x: canvasWidth - 55, y: 5, w: 50, h: 50 },
-            { svg: getSvgStar('#FFD700'), x: canvasWidth / 2 - 15, y: 10, w: 30, h: 30 },
-            // Around photo 1
-            { svg: getSvgRocket(), x: canvasWidth - 45, y: borderWidth + ph - 50, w: 35, h: 55 },
-            { svg: getSvgHeart('#FF69B4'), x: 15, y: borderWidth + ph - 30, w: 25, h: 23 },
-            // Around photo 2
-            { svg: getSvgPlanet('#87CEEB'), x: 8, y: borderWidth + ph + padding + 20, w: 40, h: 40 },
-            { svg: getSvgStar('#FFB6C1'), x: canvasWidth - 45, y: borderWidth + ph + padding + ph / 2, w: 35, h: 35 },
-            // Around photo 3
-            { svg: getSvgAstronaut(), x: canvasWidth - 50, y: borderWidth + (ph + padding) * 2 + 10, w: 45, h: 60 },
-            { svg: getSvgRocket(), x: 10, y: borderWidth + (ph + padding) * 2 + ph - 60, w: 35, h: 55 },
-            { svg: getSvgHeart('#FFB6C1'), x: canvasWidth - 40, y: canvasHeight - 75, w: 30, h: 28 },
-            { svg: getSvgStar('#FFD700'), x: 15, y: canvasHeight - 70, w: 28, h: 28 },
-          ];
-        case 'alien-friends':
-          return [
-            { svg: getSvgAlien(), x: 5, y: 5, w: 45, h: 55 },
-            { svg: getSvgPlanet('#98FB98'), x: canvasWidth - 55, y: 5, w: 50, h: 50 },
-            { svg: getSvgAlien(), x: canvasWidth - 50, y: borderWidth + ph - 45, w: 40, h: 50 },
-            { svg: getSvgStar('#FFD700'), x: 15, y: borderWidth + ph + padding + 30, w: 35, h: 35 },
-            { svg: getSvgAlien(), x: 8, y: borderWidth + (ph + padding) * 2 + 20, w: 42, h: 52 },
-            { svg: getSvgPlanet('#B3E0FF'), x: canvasWidth - 50, y: borderWidth + (ph + padding) * 2 + ph - 50, w: 45, h: 45 },
-            { svg: getSvgHeart('#98FB98'), x: canvasWidth / 2 - 15, y: 15, w: 28, h: 26 },
-            { svg: getSvgStar('#FFD700'), x: 15, y: canvasHeight - 70, w: 30, h: 30 },
-            { svg: getSvgAlien(), x: canvasWidth - 50, y: canvasHeight - 80, w: 40, h: 50 },
-          ];
-        case 'starry-dream':
-          return [
-            { svg: getSvgStar('#FFD700'), x: 10, y: 10, w: 45, h: 45 },
-            { svg: getSvgStar('#FFB6C1'), x: canvasWidth - 50, y: 8, w: 42, h: 42 },
-            { svg: getSvgStar('#87CEEB'), x: canvasWidth / 2 - 18, y: 5, w: 36, h: 36 },
-            { svg: getSvgAstronaut(), x: canvasWidth - 50, y: borderWidth + ph - 55, w: 45, h: 58 },
-            { svg: getSvgStar('#E6B3FF'), x: 12, y: borderWidth + ph + padding + 25, w: 38, h: 38 },
-            { svg: getSvgStar('#FFD700'), x: canvasWidth - 48, y: borderWidth + ph + padding + ph / 2, w: 40, h: 40 },
-            { svg: getSvgStar('#FFB6C1'), x: 10, y: borderWidth + (ph + padding) * 2 + 30, w: 42, h: 42 },
-            { svg: getSvgHeart('#FF69B4'), x: canvasWidth - 45, y: borderWidth + (ph + padding) * 2 + ph - 35, w: 35, h: 33 },
-            { svg: getSvgStar('#FFD700'), x: 15, y: canvasHeight - 70, w: 35, h: 35 },
-            { svg: getSvgStar('#87CEEB'), x: canvasWidth - 50, y: canvasHeight - 68, w: 40, h: 40 },
-          ];
-        case 'rocket-bears':
-          return [
-            { svg: getSvgBear(), x: 8, y: 8, w: 48, h: 52 },
-            { svg: getSvgRocket(), x: canvasWidth - 45, y: 5, w: 38, h: 60 },
-            { svg: getSvgHeart('#FF69B4'), x: canvasWidth / 2 - 15, y: 15, w: 28, h: 26 },
-            { svg: getSvgBear(), x: canvasWidth - 52, y: borderWidth + ph - 45, w: 45, h: 50 },
-            { svg: getSvgRocket(), x: 10, y: borderWidth + ph + padding + 15, w: 35, h: 55 },
-            { svg: getSvgStar('#FFD700'), x: canvasWidth - 45, y: borderWidth + ph + padding + ph / 2, w: 35, h: 35 },
-            { svg: getSvgBear(), x: 8, y: borderWidth + (ph + padding) * 2 + 15, w: 45, h: 50 },
-            { svg: getSvgRocket(), x: canvasWidth - 45, y: borderWidth + (ph + padding) * 2 + ph - 60, w: 38, h: 58 },
-            { svg: getSvgBear(), x: 15, y: canvasHeight - 78, w: 42, h: 48 },
-            { svg: getSvgHeart('#FFB6C1'), x: canvasWidth - 45, y: canvasHeight - 65, w: 32, h: 30 },
-          ];
-        default:
-          return [
-            { svg: getSvgStar('#FFD700'), x: 15, y: 15, w: 35, h: 35 },
-            { svg: getSvgStar('#FFB6C1'), x: canvasWidth - 50, y: 15, w: 35, h: 35 },
-            { svg: getSvgHeart('#FF69B4'), x: canvasWidth / 2 - 15, y: 15, w: 28, h: 26 },
-          ];
-      }
-    };
-
-    const positions = getStickerPositions();
-    
-    // Load all sticker images
-    const stickerImages = await Promise.all(
-      positions.map(pos => svgToImage(pos.svg))
-    );
-
-    // Draw all stickers
-    stickerImages.forEach((img, i) => {
-      const pos = positions[i];
-      ctx.drawImage(img, pos.x, pos.y, pos.w, pos.h);
-    });
-  };
 
   const downloadPhoto = useCallback(() => {
     const imageToDownload = collageImage || (capturedImages.length > 0 ? capturedImages[capturedImages.length - 1] : null);
