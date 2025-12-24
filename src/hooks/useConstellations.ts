@@ -99,7 +99,7 @@ const DEFAULT_CONSTELLATIONS: Constellation[] = [
 ];
 
 const DEFAULT_MEMORIES: Memory[] = [
-  // Beach 2025 - exact Sagittarius teapot pattern (11 stars)
+  // Beach 2025 - exact Sagittarius teapot pattern (11 stars) - SPREAD OUT
   // Star 1: Far left of teapot
   {
     id: 'beach-1',
@@ -107,7 +107,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-01-15T06:30:00'),
-    position: { x: 120, y: 260 },
+    position: { x: 150, y: 280 },
     constellationId: 'beach-2025',
   },
   // Star 2: Top-left of teapot body
@@ -117,7 +117,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-01-15T20:00:00'),
-    position: { x: 200, y: 180 },
+    position: { x: 280, y: 180 },
     constellationId: 'beach-2025',
   },
   // Star 3: Top-middle of teapot body
@@ -127,7 +127,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=400&h=300&fit=crop',
     mood: 'nostalgic',
     createdAt: new Date('2025-01-16T14:00:00'),
-    position: { x: 320, y: 160 },
+    position: { x: 480, y: 150 },
     constellationId: 'beach-2025',
   },
   // Star 4: Bottom-left of teapot body
@@ -137,7 +137,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-01-16T10:00:00'),
-    position: { x: 240, y: 320 },
+    position: { x: 340, y: 380 },
     constellationId: 'beach-2025',
   },
   // Star 5: Bottom-middle of teapot body
@@ -147,7 +147,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1414609245224-afa02bfb3fda?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-01-17T18:30:00'),
-    position: { x: 380, y: 320 },
+    position: { x: 560, y: 380 },
     constellationId: 'beach-2025',
   },
   // Star 6: Center-right of teapot (junction point)
@@ -157,7 +157,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-01-17T11:00:00'),
-    position: { x: 480, y: 260 },
+    position: { x: 720, y: 280 },
     constellationId: 'beach-2025',
   },
   // Star 7: Upper branch point
@@ -167,7 +167,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-01-18T15:00:00'),
-    position: { x: 420, y: 160 },
+    position: { x: 620, y: 160 },
     constellationId: 'beach-2025',
   },
   // Star 8: Top right (highest point)
@@ -177,7 +177,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1520942702018-0862200e6873?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-01-18T16:00:00'),
-    position: { x: 540, y: 80 },
+    position: { x: 780, y: 80 },
     constellationId: 'beach-2025',
   },
   // Star 9: Far right of teapot
@@ -187,7 +187,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-01-18T17:00:00'),
-    position: { x: 600, y: 260 },
+    position: { x: 880, y: 280 },
     constellationId: 'beach-2025',
   },
   // Star 10: Bottom point (going down from junction)
@@ -197,7 +197,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1509233725247-49e657c54213?w=400&h=300&fit=crop',
     mood: 'nostalgic',
     createdAt: new Date('2025-01-19T10:00:00'),
-    position: { x: 440, y: 420 },
+    position: { x: 640, y: 480 },
     constellationId: 'beach-2025',
   },
   // Star 11: Very bottom point
@@ -207,11 +207,11 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1476673160081-cf065bc4cf87?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-01-19T18:00:00'),
-    position: { x: 480, y: 500 },
+    position: { x: 700, y: 580 },
     constellationId: 'beach-2025',
   },
 
-  // Friendship Day 2025 - exact Sagittarius teapot pattern (11 stars)
+  // Friendship Day 2025 - exact Sagittarius teapot pattern (11 stars) - SPREAD OUT
   // Star 1: Far left of teapot
   {
     id: 'friends-1',
@@ -219,7 +219,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-03T12:00:00'),
-    position: { x: 120, y: 260 },
+    position: { x: 150, y: 280 },
     constellationId: 'friendship-day-2025',
   },
   // Star 2: Top-left of teapot body
@@ -229,7 +229,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-03T14:00:00'),
-    position: { x: 200, y: 180 },
+    position: { x: 280, y: 180 },
     constellationId: 'friendship-day-2025',
   },
   // Star 3: Top-middle of teapot body
@@ -239,7 +239,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1543807535-eceef0bc6599?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-08-03T16:00:00'),
-    position: { x: 320, y: 160 },
+    position: { x: 480, y: 150 },
     constellationId: 'friendship-day-2025',
   },
   // Star 4: Bottom-left of teapot body
@@ -249,7 +249,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1524601500432-1e1a4c71d692?w=400&h=300&fit=crop',
     mood: 'nostalgic',
     createdAt: new Date('2025-08-03T18:00:00'),
-    position: { x: 240, y: 320 },
+    position: { x: 340, y: 380 },
     constellationId: 'friendship-day-2025',
   },
   // Star 5: Bottom-middle of teapot body
@@ -259,7 +259,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-03T21:00:00'),
-    position: { x: 380, y: 320 },
+    position: { x: 560, y: 380 },
     constellationId: 'friendship-day-2025',
   },
   // Star 6: Center-right of teapot (junction point)
@@ -269,7 +269,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-08-03T19:00:00'),
-    position: { x: 480, y: 260 },
+    position: { x: 720, y: 280 },
     constellationId: 'friendship-day-2025',
   },
   // Star 7: Upper branch point
@@ -279,7 +279,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-04T10:00:00'),
-    position: { x: 420, y: 160 },
+    position: { x: 620, y: 160 },
     constellationId: 'friendship-day-2025',
   },
   // Star 8: Top right (highest point)
@@ -289,7 +289,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400&h=300&fit=crop',
     mood: 'nostalgic',
     createdAt: new Date('2025-08-04T12:00:00'),
-    position: { x: 540, y: 80 },
+    position: { x: 780, y: 80 },
     constellationId: 'friendship-day-2025',
   },
   // Star 9: Far right of teapot
@@ -299,7 +299,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-04T22:00:00'),
-    position: { x: 600, y: 260 },
+    position: { x: 880, y: 280 },
     constellationId: 'friendship-day-2025',
   },
   // Star 10: Bottom point (going down from junction)
@@ -309,7 +309,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1523301343968-6a6ebf63c672?w=400&h=300&fit=crop',
     mood: 'nostalgic',
     createdAt: new Date('2025-08-04T23:00:00'),
-    position: { x: 440, y: 420 },
+    position: { x: 640, y: 480 },
     constellationId: 'friendship-day-2025',
   },
   // Star 11: Very bottom point
@@ -319,7 +319,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-08-05T01:00:00'),
-    position: { x: 480, y: 500 },
+    position: { x: 700, y: 580 },
     constellationId: 'friendship-day-2025',
   },
 ];
