@@ -57,8 +57,8 @@ export const ConstellationCanvas = ({
             <div 
               className="absolute pointer-events-none"
               style={{
-                left: `${(Math.min(...memories.map(m => m.position.x)) + Math.max(...memories.map(m => m.position.x))) / 2}%`,
-                top: `${Math.max(...memories.map(m => m.position.y)) + 8}%`,
+                left: (Math.min(...memories.map(m => m.position.x)) + Math.max(...memories.map(m => m.position.x))) / 2,
+                top: Math.max(...memories.map(m => m.position.y)) + 80,
                 transform: 'translateX(-50%)',
               }}
             >

@@ -99,14 +99,14 @@ const DEFAULT_CONSTELLATIONS: Constellation[] = [
 ];
 
 const DEFAULT_MEMORIES: Memory[] = [
-  // Beach 2025 memories - shaped like a wave pattern
+  // Beach 2025 memories - wave pattern centered on screen
   {
     id: 'beach-1',
     title: 'Sunrise at the shore',
     imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-01-15T06:30:00'),
-    position: { x: 20, y: 35 },
+    position: { x: 180, y: 180 },
     constellationId: 'beach-2025',
   },
   {
@@ -115,7 +115,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-01-15T20:00:00'),
-    position: { x: 32, y: 28 },
+    position: { x: 320, y: 140 },
     constellationId: 'beach-2025',
   },
   {
@@ -124,7 +124,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=400&h=300&fit=crop',
     mood: 'nostalgic',
     createdAt: new Date('2025-01-16T14:00:00'),
-    position: { x: 44, y: 38 },
+    position: { x: 480, y: 200 },
     constellationId: 'beach-2025',
   },
   {
@@ -133,7 +133,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-01-16T10:00:00'),
-    position: { x: 56, y: 30 },
+    position: { x: 640, y: 150 },
     constellationId: 'beach-2025',
   },
   {
@@ -142,7 +142,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1414609245224-afa02bfb3fda?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-01-17T18:30:00'),
-    position: { x: 68, y: 40 },
+    position: { x: 800, y: 220 },
     constellationId: 'beach-2025',
   },
   {
@@ -151,7 +151,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-01-17T11:00:00'),
-    position: { x: 80, y: 32 },
+    position: { x: 950, y: 160 },
     constellationId: 'beach-2025',
   },
   {
@@ -160,7 +160,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-01-18T15:00:00'),
-    position: { x: 38, y: 50 },
+    position: { x: 400, y: 320 },
     constellationId: 'beach-2025',
   },
   {
@@ -169,17 +169,17 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1520942702018-0862200e6873?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-01-18T16:00:00'),
-    position: { x: 62, y: 52 },
+    position: { x: 720, y: 340 },
     constellationId: 'beach-2025',
   },
-  // Friendship Day 2025 memories - shaped like a heart
+  // Friendship Day 2025 memories - heart shape centered
   {
     id: 'friends-1',
     title: 'Best friends forever',
     imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-03T12:00:00'),
-    position: { x: 50, y: 25 },
+    position: { x: 560, y: 120 },
     constellationId: 'friendship-day-2025',
   },
   {
@@ -188,7 +188,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-03T14:00:00'),
-    position: { x: 35, y: 32 },
+    position: { x: 400, y: 180 },
     constellationId: 'friendship-day-2025',
   },
   {
@@ -197,7 +197,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1543807535-eceef0bc6599?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-08-03T16:00:00'),
-    position: { x: 65, y: 32 },
+    position: { x: 720, y: 180 },
     constellationId: 'friendship-day-2025',
   },
   {
@@ -206,7 +206,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1524601500432-1e1a4c71d692?w=400&h=300&fit=crop',
     mood: 'nostalgic',
     createdAt: new Date('2025-08-03T18:00:00'),
-    position: { x: 25, y: 42 },
+    position: { x: 280, y: 260 },
     constellationId: 'friendship-day-2025',
   },
   {
@@ -215,7 +215,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-03T21:00:00'),
-    position: { x: 75, y: 42 },
+    position: { x: 840, y: 260 },
     constellationId: 'friendship-day-2025',
   },
   {
@@ -224,7 +224,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop',
     mood: 'calm',
     createdAt: new Date('2025-08-03T19:00:00'),
-    position: { x: 32, y: 52 },
+    position: { x: 340, y: 350 },
     constellationId: 'friendship-day-2025',
   },
   {
@@ -233,7 +233,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-04T10:00:00'),
-    position: { x: 68, y: 52 },
+    position: { x: 780, y: 350 },
     constellationId: 'friendship-day-2025',
   },
   {
@@ -242,7 +242,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400&h=300&fit=crop',
     mood: 'nostalgic',
     createdAt: new Date('2025-08-04T12:00:00'),
-    position: { x: 42, y: 60 },
+    position: { x: 440, y: 420 },
     constellationId: 'friendship-day-2025',
   },
   {
@@ -251,7 +251,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=400&h=300&fit=crop',
     mood: 'happy',
     createdAt: new Date('2025-08-04T22:00:00'),
-    position: { x: 58, y: 60 },
+    position: { x: 680, y: 420 },
     constellationId: 'friendship-day-2025',
   },
   {
@@ -260,7 +260,7 @@ const DEFAULT_MEMORIES: Memory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1523301343968-6a6ebf63c672?w=400&h=300&fit=crop',
     mood: 'nostalgic',
     createdAt: new Date('2025-08-04T23:00:00'),
-    position: { x: 50, y: 68 },
+    position: { x: 560, y: 500 },
     constellationId: 'friendship-day-2025',
   },
 ];
