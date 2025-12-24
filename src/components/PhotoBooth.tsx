@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, X, Download, RotateCcw, Sparkles, Star, Moon, Rocket, Orbit } from 'lucide-react';
+import { Camera, X, Download, RotateCcw, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -9,26 +9,125 @@ interface PhotoBoothProps {
   onClose: () => void;
 }
 
-type SpaceFrame = 'none' | 'astronaut' | 'planets' | 'stars' | 'nebula' | 'rocket';
-type SpaceFilter = 'none' | 'cosmic' | 'aurora' | 'sunset' | 'midnight' | 'galaxy';
+type SpaceFrame = 'none' | 'kawaii-space' | 'alien-friends' | 'starry-dream' | 'rocket-bears';
+type SpaceFilter = 'none' | 'soft-pink' | 'dreamy' | 'pastel' | 'lavender';
 
-const frames: { id: SpaceFrame; name: string; icon: React.ReactNode }[] = [
-  { id: 'none', name: 'None', icon: <X className="w-4 h-4" /> },
-  { id: 'astronaut', name: 'Astronaut', icon: <Moon className="w-4 h-4" /> },
-  { id: 'planets', name: 'Planets', icon: <Orbit className="w-4 h-4" /> },
-  { id: 'stars', name: 'Stars', icon: <Star className="w-4 h-4" /> },
-  { id: 'nebula', name: 'Nebula', icon: <Sparkles className="w-4 h-4" /> },
-  { id: 'rocket', name: 'Rocket', icon: <Rocket className="w-4 h-4" /> },
+const frames: { id: SpaceFrame; name: string; emoji: string }[] = [
+  { id: 'none', name: 'None', emoji: '✕' },
+  { id: 'kawaii-space', name: 'Space', emoji: '🪐' },
+  { id: 'alien-friends', name: 'Aliens', emoji: '👽' },
+  { id: 'starry-dream', name: 'Stars', emoji: '⭐' },
+  { id: 'rocket-bears', name: 'Bears', emoji: '🧸' },
 ];
 
 const filters: { id: SpaceFilter; name: string; style: string }[] = [
   { id: 'none', name: 'None', style: '' },
-  { id: 'cosmic', name: 'Cosmic', style: 'hue-rotate(280deg) saturate(1.5)' },
-  { id: 'aurora', name: 'Aurora', style: 'hue-rotate(120deg) saturate(1.3) brightness(1.1)' },
-  { id: 'sunset', name: 'Sunset', style: 'sepia(0.3) saturate(1.4) hue-rotate(-20deg)' },
-  { id: 'midnight', name: 'Midnight', style: 'brightness(0.8) contrast(1.2) saturate(0.8)' },
-  { id: 'galaxy', name: 'Galaxy', style: 'hue-rotate(200deg) saturate(1.8) contrast(1.1)' },
+  { id: 'soft-pink', name: 'Pink', style: 'brightness(1.05) saturate(1.1)' },
+  { id: 'dreamy', name: 'Dreamy', style: 'brightness(1.1) contrast(0.95) saturate(0.9)' },
+  { id: 'pastel', name: 'Pastel', style: 'brightness(1.15) saturate(0.85)' },
+  { id: 'lavender', name: 'Lavender', style: 'hue-rotate(20deg) brightness(1.05) saturate(0.9)' },
 ];
+
+// Cute sticker components
+const CuteAstronaut = ({ className = '' }: { className?: string }) => (
+  <svg viewBox="0 0 60 80" className={className}>
+    <ellipse cx="30" cy="30" rx="22" ry="24" fill="#f0f0f0" stroke="#ddd" strokeWidth="2"/>
+    <ellipse cx="30" cy="28" rx="16" ry="17" fill="#87CEEB" opacity="0.6"/>
+    <circle cx="24" cy="26" r="4" fill="#333"/>
+    <circle cx="36" cy="26" r="4" fill="#333"/>
+    <circle cx="25" cy="25" r="1.5" fill="white"/>
+    <circle cx="37" cy="25" r="1.5" fill="white"/>
+    <ellipse cx="30" cy="34" rx="3" ry="2" fill="#FFB6C1"/>
+    <path d="M26 38 Q30 42 34 38" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round"/>
+    <ellipse cx="20" cy="32" rx="3" ry="2" fill="#FFB6C1" opacity="0.5"/>
+    <ellipse cx="40" cy="32" rx="3" ry="2" fill="#FFB6C1" opacity="0.5"/>
+    <rect x="22" y="54" rx="8" ry="8" width="16" height="20" fill="#f0f0f0" stroke="#ddd" strokeWidth="2"/>
+    <ellipse cx="14" cy="62" rx="6" ry="4" fill="#f0f0f0" stroke="#ddd" strokeWidth="2"/>
+    <ellipse cx="46" cy="62" rx="6" ry="4" fill="#f0f0f0" stroke="#ddd" strokeWidth="2"/>
+  </svg>
+);
+
+const CutePlanet = ({ className = '', color = '#E6B3FF' }: { className?: string; color?: string }) => (
+  <svg viewBox="0 0 50 50" className={className}>
+    <circle cx="25" cy="25" r="18" fill={color}/>
+    <ellipse cx="25" cy="25" rx="28" ry="6" fill="none" stroke={color} strokeWidth="3" opacity="0.7" transform="rotate(-20 25 25)"/>
+    <circle cx="18" cy="20" r="3" fill="white" opacity="0.4"/>
+    <circle cx="30" cy="30" r="4" fill="white" opacity="0.3"/>
+    <circle cx="20" cy="22" r="2.5" fill="#333"/>
+    <circle cx="30" cy="22" r="2.5" fill="#333"/>
+    <circle cx="21" cy="21" r="1" fill="white"/>
+    <circle cx="31" cy="21" r="1" fill="white"/>
+    <path d="M23 28 Q25 31 27 28" fill="none" stroke="#333" strokeWidth="1.2" strokeLinecap="round"/>
+    <ellipse cx="16" cy="26" rx="2" ry="1.5" fill="#FFB6C1" opacity="0.5"/>
+    <ellipse cx="34" cy="26" rx="2" ry="1.5" fill="#FFB6C1" opacity="0.5"/>
+  </svg>
+);
+
+const CuteAlien = ({ className = '' }: { className?: string }) => (
+  <svg viewBox="0 0 50 60" className={className}>
+    <ellipse cx="25" cy="30" rx="18" ry="22" fill="#98FB98"/>
+    <ellipse cx="15" cy="12" rx="4" ry="8" fill="#98FB98"/>
+    <ellipse cx="35" cy="12" rx="4" ry="8" fill="#98FB98"/>
+    <circle cx="15" cy="6" r="4" fill="#FFD700"/>
+    <circle cx="35" cy="6" r="4" fill="#FFD700"/>
+    <ellipse cx="18" cy="26" rx="5" ry="6" fill="#333"/>
+    <ellipse cx="32" cy="26" rx="5" ry="6" fill="#333"/>
+    <ellipse cx="19" cy="24" rx="2" ry="3" fill="white"/>
+    <ellipse cx="33" cy="24" rx="2" ry="3" fill="white"/>
+    <path d="M22 38 Q25 42 28 38" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round"/>
+    <ellipse cx="14" cy="32" rx="2" ry="1.5" fill="#FFB6C1" opacity="0.6"/>
+    <ellipse cx="36" cy="32" rx="2" ry="1.5" fill="#FFB6C1" opacity="0.6"/>
+  </svg>
+);
+
+const CuteRocket = ({ className = '' }: { className?: string }) => (
+  <svg viewBox="0 0 40 70" className={className}>
+    <path d="M20 5 Q30 20 30 45 L10 45 Q10 20 20 5" fill="#FF6B6B"/>
+    <ellipse cx="20" cy="35" rx="8" ry="10" fill="#87CEEB"/>
+    <circle cx="20" cy="33" r="4" fill="#333"/>
+    <circle cx="18" cy="31" r="1.5" fill="white"/>
+    <path d="M10 45 L5 60 L12 50" fill="#FFD93D"/>
+    <path d="M30 45 L35 60 L28 50" fill="#FFD93D"/>
+    <ellipse cx="20" cy="60" rx="6" ry="10" fill="#FF9F43" opacity="0.8"/>
+    <ellipse cx="20" cy="62" rx="4" ry="6" fill="#FFD93D"/>
+  </svg>
+);
+
+const CuteStar = ({ className = '', color = '#FFD700' }: { className?: string; color?: string }) => (
+  <svg viewBox="0 0 40 40" className={className}>
+    <path d="M20 2 L24 14 L37 14 L27 22 L31 35 L20 27 L9 35 L13 22 L3 14 L16 14 Z" fill={color}/>
+    <circle cx="16" cy="18" r="2" fill="#333"/>
+    <circle cx="24" cy="18" r="2" fill="#333"/>
+    <circle cx="17" cy="17" r="0.8" fill="white"/>
+    <circle cx="25" cy="17" r="0.8" fill="white"/>
+    <path d="M18 23 Q20 25 22 23" fill="none" stroke="#333" strokeWidth="1" strokeLinecap="round"/>
+  </svg>
+);
+
+const CuteBear = ({ className = '' }: { className?: string }) => (
+  <svg viewBox="0 0 50 55" className={className}>
+    <circle cx="12" cy="12" r="8" fill="#D2691E"/>
+    <circle cx="38" cy="12" r="8" fill="#D2691E"/>
+    <circle cx="12" cy="12" r="4" fill="#8B4513"/>
+    <circle cx="38" cy="12" r="4" fill="#8B4513"/>
+    <circle cx="25" cy="30" r="20" fill="#D2691E"/>
+    <circle cx="18" cy="26" r="3" fill="#333"/>
+    <circle cx="32" cy="26" r="3" fill="#333"/>
+    <circle cx="19" cy="25" r="1" fill="white"/>
+    <circle cx="33" cy="25" r="1" fill="white"/>
+    <ellipse cx="25" cy="34" rx="5" ry="4" fill="#8B4513"/>
+    <ellipse cx="25" cy="33" rx="2" ry="1.5" fill="#333"/>
+    <path d="M23 37 Q25 39 27 37" fill="none" stroke="#333" strokeWidth="1" strokeLinecap="round"/>
+    <ellipse cx="14" cy="30" rx="3" ry="2" fill="#FFB6C1" opacity="0.6"/>
+    <ellipse cx="36" cy="30" rx="3" ry="2" fill="#FFB6C1" opacity="0.6"/>
+  </svg>
+);
+
+const CuteHeart = ({ className = '', color = '#FF69B4' }: { className?: string; color?: string }) => (
+  <svg viewBox="0 0 30 28" className={className}>
+    <path d="M15 26 C5 18 0 12 0 7 C0 3 3 0 7 0 C10 0 13 2 15 5 C17 2 20 0 23 0 C27 0 30 3 30 7 C30 12 25 18 15 26" fill={color}/>
+  </svg>
+);
 
 export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -123,97 +222,94 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
   }, []);
 
   const getFrameOverlay = () => {
+    const baseFrameStyle = "absolute inset-0 pointer-events-none";
+    
     switch (selectedFrame) {
-      case 'astronaut':
+      case 'kawaii-space':
         return (
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 rounded-full border-[20px] border-slate-700/80" 
-                 style={{ 
-                   margin: '5%',
-                   boxShadow: 'inset 0 0 60px rgba(100, 200, 255, 0.3), 0 0 40px rgba(0,0,0,0.5)'
-                 }} />
-            <div className="absolute top-[8%] left-1/2 -translate-x-1/2 bg-gradient-to-b from-slate-600 to-slate-800 px-6 py-1 rounded-full text-xs text-cyan-300 font-mono">
-              ASTRONAUT MODE
+          <div className={baseFrameStyle}>
+            {/* Pastel gradient border */}
+            <div className="absolute inset-0 border-[16px] rounded-lg" 
+                 style={{ borderImage: 'linear-gradient(135deg, #E6B3FF, #FFB3D9, #B3E0FF, #E6B3FF) 1' }} />
+            <div className="absolute inset-2 border-4 border-white/30 rounded-lg" />
+            
+            {/* Stickers */}
+            <CuteAstronaut className="absolute top-2 left-2 w-16 h-20" />
+            <CutePlanet className="absolute top-4 right-4 w-14 h-14" color="#E6B3FF" />
+            <CutePlanet className="absolute bottom-16 left-4 w-10 h-10" color="#87CEEB" />
+            <CuteRocket className="absolute bottom-4 right-4 w-10 h-16" />
+            <CuteStar className="absolute top-1/4 right-2 w-8 h-8" color="#FFD700" />
+            <CuteStar className="absolute bottom-1/3 left-2 w-6 h-6" color="#FFB6C1" />
+            <CuteHeart className="absolute top-8 left-1/3 w-6 h-6" color="#FF69B4" />
+            <CuteHeart className="absolute bottom-20 right-1/4 w-5 h-5" color="#FFB6C1" />
+            
+            {/* Bottom label */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-300 to-pink-300 px-4 py-1 rounded-full">
+              <span className="text-xs font-bold text-white drop-shadow">✨ CUTE SPACE BOOTH ✨</span>
             </div>
           </div>
         );
-      case 'planets':
+      case 'alien-friends':
         return (
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-orange-400 to-red-600 opacity-80" />
-            <div className="absolute -bottom-5 -left-5 w-20 h-20 rounded-full bg-gradient-to-br from-blue-300 to-blue-600 opacity-70" />
-            <div className="absolute top-1/4 -left-3 w-8 h-8 rounded-full bg-gradient-to-br from-amber-200 to-amber-500 opacity-60" />
-            <div className="absolute bottom-1/3 -right-2 w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-700 opacity-70" 
-                 style={{ boxShadow: '10px 0 0 rgba(200,150,255,0.3)' }} />
-          </div>
-        );
-      case 'stars':
-        return (
-          <div className="absolute inset-0 pointer-events-none">
-            {[...Array(20)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-1 h-1 bg-white rounded-full"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  boxShadow: '0 0 4px 2px rgba(255,255,255,0.5)',
-                }}
-                animate={{
-                  opacity: [0.3, 1, 0.3],
-                  scale: [1, 1.5, 1],
-                }}
-                transition={{
-                  duration: 1 + Math.random() * 2,
-                  repeat: Infinity,
-                  delay: Math.random() * 2,
-                }}
-              />
-            ))}
-            <div className="absolute top-3 right-3">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              >
-                <Star className="w-8 h-8 text-yellow-300 fill-yellow-300" />
-              </motion.div>
+          <div className={baseFrameStyle}>
+            <div className="absolute inset-0 border-[16px] rounded-lg" 
+                 style={{ borderImage: 'linear-gradient(135deg, #98FB98, #B3E0FF, #E6B3FF, #98FB98) 1' }} />
+            
+            <CuteAlien className="absolute top-2 left-2 w-14 h-16" />
+            <CuteAlien className="absolute top-2 right-2 w-12 h-14" />
+            <CuteAlien className="absolute bottom-4 left-4 w-10 h-12" />
+            <CutePlanet className="absolute top-1/4 right-4 w-12 h-12" color="#98FB98" />
+            <CutePlanet className="absolute bottom-1/4 left-2 w-10 h-10" color="#B3E0FF" />
+            <CuteStar className="absolute top-12 left-1/3 w-6 h-6" color="#FFD700" />
+            <CuteStar className="absolute bottom-16 right-1/3 w-7 h-7" color="#FFD700" />
+            <CuteHeart className="absolute top-1/2 right-2 w-5 h-5" color="#FF69B4" />
+            
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-300 to-cyan-300 px-4 py-1 rounded-full">
+              <span className="text-xs font-bold text-white drop-shadow">👽 ALIEN FRIENDS 👽</span>
             </div>
           </div>
         );
-      case 'nebula':
+      case 'starry-dream':
         return (
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-transparent to-pink-500/20" />
-            <div className="absolute top-0 left-0 w-full h-full"
-                 style={{
-                   background: 'radial-gradient(ellipse at 20% 30%, rgba(138, 43, 226, 0.3) 0%, transparent 50%), radial-gradient(ellipse at 80% 70%, rgba(255, 20, 147, 0.25) 0%, transparent 50%)',
-                 }} />
-            <motion.div 
-              className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full"
-              style={{ background: 'radial-gradient(circle, rgba(147, 51, 234, 0.4) 0%, transparent 70%)' }}
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
-              transition={{ duration: 4, repeat: Infinity }}
-            />
+          <div className={baseFrameStyle}>
+            <div className="absolute inset-0 border-[16px] rounded-lg" 
+                 style={{ borderImage: 'linear-gradient(135deg, #FFD700, #FFB6C1, #87CEEB, #FFD700) 1' }} />
+            
+            {/* Many cute stars */}
+            <CuteStar className="absolute top-2 left-2 w-12 h-12" color="#FFD700" />
+            <CuteStar className="absolute top-4 right-4 w-14 h-14" color="#FFB6C1" />
+            <CuteStar className="absolute bottom-4 left-4 w-10 h-10" color="#87CEEB" />
+            <CuteStar className="absolute bottom-8 right-2 w-12 h-12" color="#FFD700" />
+            <CuteStar className="absolute top-1/3 left-1 w-8 h-8" color="#E6B3FF" />
+            <CuteStar className="absolute top-1/2 right-1 w-8 h-8" color="#FFB6C1" />
+            <CuteStar className="absolute bottom-1/3 left-2 w-7 h-7" color="#FFD700" />
+            <CuteHeart className="absolute top-16 left-1/4 w-5 h-5" color="#FF69B4" />
+            <CuteHeart className="absolute bottom-20 right-1/4 w-6 h-6" color="#FFB6C1" />
+            <CuteAstronaut className="absolute bottom-2 right-2 w-12 h-16" />
+            
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-300 to-pink-300 px-4 py-1 rounded-full">
+              <span className="text-xs font-bold text-white drop-shadow">⭐ STARRY DREAM ⭐</span>
+            </div>
           </div>
         );
-      case 'rocket':
+      case 'rocket-bears':
         return (
-          <div className="absolute inset-0 pointer-events-none">
-            <motion.div 
-              className="absolute bottom-4 right-4"
-              animate={{ y: [-5, 5, -5], rotate: [-5, 5, -5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <Rocket className="w-16 h-16 text-slate-300 -rotate-45" />
-              <motion.div 
-                className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-8"
-                style={{ background: 'linear-gradient(to bottom, #ff6b35, #ff4500, transparent)' }}
-                animate={{ scaleY: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
-                transition={{ duration: 0.3, repeat: Infinity }}
-              />
-            </motion.div>
-            <div className="absolute bottom-2 left-2 text-xs text-cyan-400 font-mono bg-black/50 px-2 py-1 rounded">
-              🚀 LAUNCH MODE
+          <div className={baseFrameStyle}>
+            <div className="absolute inset-0 border-[16px] rounded-lg" 
+                 style={{ borderImage: 'linear-gradient(135deg, #D2691E, #FFB6C1, #FF6B6B, #D2691E) 1' }} />
+            
+            <CuteBear className="absolute top-2 left-2 w-14 h-16" />
+            <CuteBear className="absolute top-4 right-4 w-12 h-14" />
+            <CuteBear className="absolute bottom-16 left-4 w-10 h-12" />
+            <CuteRocket className="absolute top-1/4 right-2 w-10 h-16" />
+            <CuteRocket className="absolute bottom-4 right-4 w-8 h-14" />
+            <CuteRocket className="absolute bottom-1/3 left-1 w-8 h-12" />
+            <CuteStar className="absolute top-12 left-1/3 w-6 h-6" color="#FFD700" />
+            <CuteHeart className="absolute top-1/2 right-1/4 w-6 h-6" color="#FF69B4" />
+            <CuteHeart className="absolute bottom-24 left-1/3 w-5 h-5" color="#FFB6C1" />
+            
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-300 to-pink-300 px-4 py-1 rounded-full">
+              <span className="text-xs font-bold text-white drop-shadow">🧸 ROCKET BEARS 🚀</span>
             </div>
           </div>
         );
@@ -320,11 +416,11 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
                     onClick={() => setSelectedFrame(frame.id)}
                     className={`flex items-center gap-1.5 ${
                       selectedFrame === frame.id 
-                        ? 'bg-purple-500/30 text-purple-300 border border-purple-500/50' 
+                        ? 'bg-pink-500/30 text-pink-300 border border-pink-500/50' 
                         : 'text-white/60 hover:text-white'
                     }`}
                   >
-                    {frame.icon}
+                    <span>{frame.emoji}</span>
                     <span className="text-xs">{frame.name}</span>
                   </Button>
                 ))}
