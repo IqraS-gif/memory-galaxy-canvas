@@ -1,12 +1,15 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, X, Download, RotateCcw, Heart } from 'lucide-react';
+import { Camera, X, Download, RotateCcw, Heart, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { Mood } from '@/types/memory';
 
 interface PhotoBoothProps {
   isOpen: boolean;
   onClose: () => void;
+  onAddToConstellation?: (imageUrl: string, mood: Mood) => void;
+  hasActiveConstellation?: boolean;
 }
 
 type SpaceFrame = 'none' | 'kawaii-space' | 'alien-friends' | 'starry-dream' | 'rocket-bears';
@@ -238,7 +241,7 @@ const CuteHeart = ({ className = '', color = '#FF69B4' }: { className?: string; 
   </svg>
 );
 
-export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
+export const PhotoBooth = ({ isOpen, onClose, onAddToConstellation, hasActiveConstellation }: PhotoBoothProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const collageCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -250,6 +253,21 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [photoCount, setPhotoCount] = useState(0);
+  const [selectedMood, setSelectedMood] = useState<Mood>('happy');
+
+  const moods: { id: Mood; label: string; emoji: string }[] = [
+    { id: 'happy', label: 'Happy', emoji: '☀️' },
+    { id: 'calm', label: 'Calm', emoji: '🌊' },
+    { id: 'nostalgic', label: 'Nostalgic', emoji: '🌸' },
+  ];
+
+  const handleAddToConstellation = () => {
+    if (collageImage && onAddToConstellation) {
+      onAddToConstellation(collageImage, selectedMood);
+      toast.success('Photo added to your constellation!');
+      onClose();
+    }
+  };
 
   const startCamera = useCallback(async () => {
     try {
@@ -800,34 +818,72 @@ export const PhotoBooth = ({ isOpen, onClose }: PhotoBoothProps) => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-center gap-3 pt-2">
+            <div className="flex flex-col gap-3 pt-2">
               {collageImage ? (
                 <>
-                  <Button
-                    variant="outline"
-                    onClick={retake}
-                    className="gap-2 border-white/20 text-white hover:bg-white/10"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    Start Over
-                  </Button>
-                  <Button
-                    onClick={downloadPhoto}
-                    className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                  >
-                    <Download className="w-4 h-4" />
-                    Save Collage
-                  </Button>
+                  {/* Mood selector for adding to constellation */}
+                  {hasActiveConstellation && onAddToConstellation && (
+                    <div className="space-y-2">
+                      <p className="text-xs text-white/60 text-center">Add to constellation with mood:</p>
+                      <div className="flex justify-center gap-2">
+                        {moods.map(mood => (
+                          <Button
+                            key={mood.id}
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedMood(mood.id)}
+                            className={`flex items-center gap-1.5 ${
+                              selectedMood === mood.id 
+                                ? 'bg-yellow-500/30 text-yellow-300 border border-yellow-500/50' 
+                                : 'text-white/60 hover:text-white'
+                            }`}
+                          >
+                            <span>{mood.emoji}</span>
+                            <span className="text-xs">{mood.label}</span>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-center gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={retake}
+                      className="gap-2 border-white/20 text-white hover:bg-white/10"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Start Over
+                    </Button>
+                    <Button
+                      onClick={downloadPhoto}
+                      className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                    >
+                      <Download className="w-4 h-4" />
+                      Save
+                    </Button>
+                    {hasActiveConstellation && onAddToConstellation && (
+                      <Button
+                        onClick={handleAddToConstellation}
+                        className="gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                      >
+                        <Star className="w-4 h-4" />
+                        Add to Stars
+                      </Button>
+                    )}
+                  </div>
                 </>
               ) : (
-                <Button
-                  onClick={capturePhoto}
-                  disabled={countdown !== null}
-                  className="gap-2 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 px-8"
-                >
-                  <Camera className="w-4 h-4" />
-                  {capturedImages.length === 0 ? 'Take 3 Photos' : `Photo ${capturedImages.length + 1} of 3`}
-                </Button>
+                <div className="flex justify-center">
+                  <Button
+                    onClick={capturePhoto}
+                    disabled={countdown !== null}
+                    className="gap-2 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 px-8"
+                  >
+                    <Camera className="w-4 h-4" />
+                    {capturedImages.length === 0 ? 'Take 3 Photos' : `Photo ${capturedImages.length + 1} of 3`}
+                  </Button>
+                </div>
               )}
             </div>
           </div>

@@ -1,16 +1,20 @@
 import { motion } from 'framer-motion';
-import { Plus, List, Heart, Box, Square, Image, Palette, Camera } from 'lucide-react';
+import { Plus, List, Heart, Box, Square, Image, Palette, Camera, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { DownloadPosterButton } from '@/components/DownloadPosterButton';
+import { Memory } from '@/types/memory';
 
 interface ControlsProps {
-  view: 'constellation' | 'constellation3d' | 'timeline' | 'emotions';
-  onViewChange: (view: 'constellation' | 'constellation3d' | 'timeline' | 'emotions') => void;
+  view: 'constellation' | 'constellation3d' | 'timeline' | 'emotions' | 'stats';
+  onViewChange: (view: 'constellation' | 'constellation3d' | 'timeline' | 'emotions' | 'stats') => void;
   onAddClick: () => void;
   onPhotoBoothClick: () => void;
   memoryCount: number;
   hasActiveConstellation: boolean;
   backgroundStyle: 'gradient' | 'nebula';
   onBackgroundStyleChange: (style: 'gradient' | 'nebula') => void;
+  memories: Memory[];
+  constellationName?: string;
 }
 
 export const Controls = ({ 
@@ -21,7 +25,9 @@ export const Controls = ({
   memoryCount,
   hasActiveConstellation,
   backgroundStyle,
-  onBackgroundStyleChange
+  onBackgroundStyleChange,
+  memories,
+  constellationName
 }: ControlsProps) => {
   return (
     <motion.div
@@ -79,6 +85,17 @@ export const Controls = ({
             <Heart className="w-4 h-4" />
             <span className="hidden sm:inline">Emotions</span>
           </button>
+          <button
+            onClick={() => onViewChange('stats')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${
+              view === 'stats'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span className="hidden sm:inline">Stats</span>
+          </button>
         </div>
 
         {/* Separator */}
@@ -123,6 +140,9 @@ export const Controls = ({
           <Camera className="w-4 h-4" />
           <span className="hidden sm:inline">Photo Booth</span>
         </Button>
+
+        {/* Download Poster Button */}
+        <DownloadPosterButton memories={memories} constellationName={constellationName} />
 
         {/* Add Button */}
         <Button
