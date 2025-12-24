@@ -1,5 +1,7 @@
 # ✨ Stellar Memories
 
+https://memory-galaxy-canvas.lovable.app
+
 A beautiful, interactive web application that transforms your cherished memories into constellations in the night sky. Each memory becomes a star, connected by the threads of your experiences.
 
 ![Stellar Memories](https://img.shields.io/badge/React-18.3-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![Tailwind](https://img.shields.io/badge/Tailwind-4.0-teal) ![Vite](https://img.shields.io/badge/Vite-5.0-purple)
