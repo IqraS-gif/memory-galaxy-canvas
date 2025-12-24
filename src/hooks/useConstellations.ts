@@ -128,19 +128,13 @@ export const useConstellations = () => {
       }
     }
     
-    // Add default constellations if they don't exist
-    const hasBeach = loadedConstellations.some(c => c.id === 'beach-2025');
-    const hasFriendship = loadedConstellations.some(c => c.id === 'friendship-day-2025');
-    
-    if (!hasBeach) {
-      loadedConstellations.push(DEFAULT_CONSTELLATIONS[0]);
-      loadedMemories.push(...DEFAULT_MEMORIES.filter(m => m.constellationId === 'beach-2025'));
-    }
-    
-    if (!hasFriendship) {
-      loadedConstellations.push(DEFAULT_CONSTELLATIONS[1]);
-      loadedMemories.push(...DEFAULT_MEMORIES.filter(m => m.constellationId === 'friendship-day-2025'));
-    }
+    // Filter out any old default constellations
+    loadedConstellations = loadedConstellations.filter(c => 
+      c.id !== 'beach-2025' && c.id !== 'friendship-day-2025'
+    );
+    loadedMemories = loadedMemories.filter(m => 
+      m.constellationId !== 'beach-2025' && m.constellationId !== 'friendship-day-2025'
+    );
     
     setConstellations(loadedConstellations);
     setMemories(loadedMemories);
