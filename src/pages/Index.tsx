@@ -103,6 +103,7 @@ const Index = () => {
             pattern={pattern}
             groupByMood={false}
             onStarClick={handleStarClick}
+            constellationName={activeConstellation?.name}
           />
         ) : view === 'constellation3d' ? (
           <Constellation3DView
