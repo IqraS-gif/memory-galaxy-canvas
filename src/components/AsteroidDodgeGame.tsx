@@ -34,11 +34,13 @@ export const AsteroidDodgeGame = ({ isOpen, onClose }: AsteroidDodgeGameProps) =
   const [shipPosition, setShipPosition] = useState({ x: 50, y: 80 });
   const [asteroids, setAsteroids] = useState<Asteroid[]>([]);
   const [stars, setStars] = useState<Star[]>([]);
+  const [shipSpeed, setShipSpeed] = useState(3);
   const gameRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
   const asteroidIdRef = useRef(0);
   const difficultyRef = useRef(1);
+  const keysPressed = useRef<Set<string>>(new Set());
 
   // Generate background stars
   useEffect(() => {
@@ -57,8 +59,10 @@ export const AsteroidDodgeGame = ({ isOpen, onClose }: AsteroidDodgeGameProps) =
   const resetGame = useCallback(() => {
     setScore(0);
     setShipPosition({ x: 50, y: 80 });
+    setShipSpeed(3);
     difficultyRef.current = 1;
     asteroidIdRef.current = 0;
+    keysPressed.current.clear();
     
     // Spawn initial asteroids immediately
     const initialAsteroids: Asteroid[] = [];
@@ -66,7 +70,7 @@ export const AsteroidDodgeGame = ({ isOpen, onClose }: AsteroidDodgeGameProps) =
       initialAsteroids.push({
         id: asteroidIdRef.current++,
         x: Math.random() * 90 + 5,
-        y: Math.random() * 40 - 20, // Start above and in the top portion
+        y: Math.random() * 40 - 20,
         size: Math.random() * 6 + 4,
         speed: Math.random() * 0.3 + 0.3,
         rotation: Math.random() * 360,
@@ -114,6 +118,68 @@ export const AsteroidDodgeGame = ({ isOpen, onClose }: AsteroidDodgeGameProps) =
       handleMove(e.touches[0].clientX, e.touches[0].clientY);
     }
   }, [handleMove]);
+
+  // Keyboard controls
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        keysPressed.current.add(e.key);
+        
+        // Increase speed on up arrow
+        if (e.key === 'ArrowUp') {
+          setShipSpeed(prev => Math.min(prev + 0.5, 8));
+        }
+        // Decrease speed on down arrow
+        if (e.key === 'ArrowDown') {
+          setShipSpeed(prev => Math.max(prev - 0.5, 1));
+        }
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      keysPressed.current.delete(e.key);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [gameState]);
+
+  // Update ship position based on keys
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+
+    const moveShip = () => {
+      setShipPosition(prev => {
+        let { x, y } = prev;
+        
+        if (keysPressed.current.has('ArrowLeft')) {
+          x = Math.max(5, x - shipSpeed);
+        }
+        if (keysPressed.current.has('ArrowRight')) {
+          x = Math.min(95, x + shipSpeed);
+        }
+        if (keysPressed.current.has('ArrowUp')) {
+          y = Math.max(5, y - shipSpeed * 0.5);
+        }
+        if (keysPressed.current.has('ArrowDown')) {
+          y = Math.min(95, y + shipSpeed * 0.5);
+        }
+        
+        return { x, y };
+      });
+    };
+
+    const intervalId = setInterval(moveShip, 16);
+    return () => clearInterval(intervalId);
+  }, [gameState, shipSpeed]);
 
   // Check collision
   const checkCollision = useCallback((asteroid: Asteroid) => {
@@ -353,6 +419,7 @@ export const AsteroidDodgeGame = ({ isOpen, onClose }: AsteroidDodgeGameProps) =
                 <div className="absolute top-4 left-4 text-white">
                   <p className="text-2xl font-bold font-display">{score}</p>
                   <p className="text-xs text-white/60">SCORE</p>
+                  <p className="text-xs text-purple-300 mt-1">Speed: {shipSpeed.toFixed(1)}</p>
                 </div>
               )}
 
@@ -400,7 +467,8 @@ export const AsteroidDodgeGame = ({ isOpen, onClose }: AsteroidDodgeGameProps) =
                   </Button>
                   
                   <p className="text-white/40 text-xs mt-6 text-center">
-                    Use mouse or touch to control
+                    Use mouse, touch, or arrow keys to control<br/>
+                    ↑/↓ to adjust speed • ←/→ to move
                   </p>
                 </motion.div>
               )}
