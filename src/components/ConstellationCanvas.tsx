@@ -52,18 +52,21 @@ export const ConstellationCanvas = ({
             />
           ))}
 
-          {/* Constellation name label */}
+          {/* Constellation name label - positioned below the constellation */}
           {constellationName && memories.length > 0 && (
             <div 
               className="absolute pointer-events-none"
               style={{
-                left: `${Math.min(...memories.map(m => m.position.x)) - 5}%`,
-                top: `${Math.min(...memories.map(m => m.position.y)) - 8}%`,
+                left: `${(Math.min(...memories.map(m => m.position.x)) + Math.max(...memories.map(m => m.position.x))) / 2}%`,
+                top: `${Math.max(...memories.map(m => m.position.y)) + 8}%`,
+                transform: 'translateX(-50%)',
               }}
             >
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-1 rounded-full">
-                <span className="text-white/80 text-sm font-medium tracking-wide">
-                  ✦ {constellationName}
+              <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-md border border-white/30 px-6 py-2 rounded-full shadow-lg">
+                <span className="text-white text-base font-semibold tracking-wider flex items-center gap-2">
+                  <span className="text-yellow-300">✦</span>
+                  {constellationName}
+                  <span className="text-yellow-300">✦</span>
                 </span>
               </div>
             </div>
