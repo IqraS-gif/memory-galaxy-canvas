@@ -14,6 +14,7 @@ import { Constellation3DView } from '@/components/Constellation3DView';
 import { ConstellationSwitcher } from '@/components/ConstellationSwitcher';
 import { CreateConstellationModal } from '@/components/CreateConstellationModal';
 import { EmptyState } from '@/components/EmptyState';
+import { PhotoBooth } from '@/components/PhotoBooth';
 
 const Index = () => {
   const {
@@ -37,6 +38,7 @@ const Index = () => {
   const [isMemoryModalOpen, setIsMemoryModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isCreateConstellationOpen, setIsCreateConstellationOpen] = useState(false);
+  const [isPhotoBoothOpen, setIsPhotoBoothOpen] = useState(false);
 
   const handleStarClick = (memory: Memory) => {
     setSelectedMemory(memory);
@@ -128,6 +130,7 @@ const Index = () => {
         view={view}
         onViewChange={setView}
         onAddClick={() => setIsUploadModalOpen(true)}
+        onPhotoBoothClick={() => setIsPhotoBoothOpen(true)}
         memoryCount={memories.length}
         hasActiveConstellation={!!activeConstellation}
         backgroundStyle={backgroundStyle}
@@ -158,6 +161,12 @@ const Index = () => {
         isOpen={isCreateConstellationOpen}
         onClose={() => setIsCreateConstellationOpen(false)}
         onCreate={handleCreateConstellation}
+      />
+
+      {/* Photo Booth */}
+      <PhotoBooth
+        isOpen={isPhotoBoothOpen}
+        onClose={() => setIsPhotoBoothOpen(false)}
       />
     </div>
   );

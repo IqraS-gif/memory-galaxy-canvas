@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
-import { Plus, List, Heart, Box, Square, Image, Palette } from 'lucide-react';
+import { Plus, List, Heart, Box, Square, Image, Palette, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ControlsProps {
   view: 'constellation' | 'constellation3d' | 'timeline' | 'emotions';
   onViewChange: (view: 'constellation' | 'constellation3d' | 'timeline' | 'emotions') => void;
   onAddClick: () => void;
+  onPhotoBoothClick: () => void;
   memoryCount: number;
   hasActiveConstellation: boolean;
   backgroundStyle: 'gradient' | 'nebula';
@@ -16,6 +17,7 @@ export const Controls = ({
   view, 
   onViewChange, 
   onAddClick, 
+  onPhotoBoothClick,
   memoryCount,
   hasActiveConstellation,
   backgroundStyle,
@@ -110,6 +112,17 @@ export const Controls = ({
 
         {/* Separator */}
         <div className="w-px h-8 bg-border/50" />
+
+        {/* Photo Booth Button */}
+        <Button
+          onClick={onPhotoBoothClick}
+          variant="outline"
+          className="rounded-full gap-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/20"
+          size="default"
+        >
+          <Camera className="w-4 h-4" />
+          <span className="hidden sm:inline">Photo Booth</span>
+        </Button>
 
         {/* Add Button */}
         <Button
