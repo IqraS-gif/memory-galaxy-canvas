@@ -6,6 +6,10 @@ A beautiful, interactive web application that transforms your cherished memories
 
 ![Stellar Memories](https://img.shields.io/badge/React-18.3-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![Tailwind](https://img.shields.io/badge/Tailwind-4.0-teal) ![Vite](https://img.shields.io/badge/Vite-5.0-purple)
 
+Tranform your memories into beautiful stars in sky
+<img width="800" height="800" alt="friendship-day-2025-poster" src="https://github.com/user-attachments/assets/e5aafa5e-5035-41fa-a1ee-d61f8d1b252f" />
+
+
 ## 🌟 Features
 
 ### Core Features
