@@ -1,73 +1,128 @@
-# Welcome to your Lovable project
+# ✨ Stellar Memories
 
-## Project info
+A beautiful, interactive web application that transforms your cherished memories into constellations in the night sky. Each memory becomes a star, connected by the threads of your experiences.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+![Stellar Memories](https://img.shields.io/badge/React-18.3-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![Tailwind](https://img.shields.io/badge/Tailwind-4.0-teal) ![Vite](https://img.shields.io/badge/Vite-5.0-purple)
 
-## How can I edit this code?
+## 🌟 Features
 
-There are several ways of editing your application.
+### Core Features
+- **Memory Constellations** - Upload photos and create personalized constellations from your memories
+- **Interactive Star Map** - Pan, zoom, and explore your memory universe with smooth animations
+- **Mood Tracking** - Tag memories with emotions (Happy, Calm, Energetic, Reflective, Romantic) and visualize patterns
+- **3D Constellation View** - Experience your memories in an immersive 3D environment
+- **Multiple Constellation Patterns** - Choose from various patterns (Orion, Ursa Major, Cassiopeia, and more)
 
-**Use Lovable**
+### Additional Features
+- **Timeline View** - Browse memories chronologically
+- **Statistics Dashboard** - Insights into your memory patterns and emotions
+- **Downloadable Posters** - Export your constellations as beautiful artwork
+- **Ambient Sound** - Optional cosmic soundscape for immersive experience
+- **Photo Booth** - Capture moments directly within the app
+- **Asteroid Dodge Game** - A fun mini-game with keyboard controls
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🚀 Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
+- Node.js 18+ 
+- npm or bun
 
-**Use your preferred IDE**
+### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+```bash
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Navigate to the project directory
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🎮 Controls
 
-**Use GitHub Codespaces**
+### Constellation Canvas
+- **Mouse Drag** - Pan around the star map
+- **Scroll Wheel** - Zoom in/out
+- **Click on Star** - View memory details
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Asteroid Dodge Game
+- **← → Arrow Keys** - Move spaceship left/right
+- **↑ Arrow Key** - Increase speed
+- **↓ Arrow Key** - Decrease speed
+- **Mouse/Touch** - Direct control on mobile
 
-## What technologies are used for this project?
+## 🏗️ Tech Stack
 
-This project is built with:
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS with custom design system
+- **Animations**: Framer Motion
+- **3D Graphics**: React Three Fiber + Drei
+- **UI Components**: shadcn/ui (Radix UI primitives)
+- **Routing**: React Router DOM
+- **State Management**: TanStack React Query
+- **Charts**: Recharts
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📁 Project Structure
 
-## How can I deploy this project?
+```
+src/
+├── assets/           # Static assets (images, backgrounds)
+├── components/       # React components
+│   ├── ui/          # shadcn/ui components
+│   ├── Star.tsx     # Individual star component
+│   ├── ConstellationCanvas.tsx
+│   ├── ConstellationLines.tsx
+│   ├── AsteroidDodgeGame.tsx
+│   └── ...
+├── hooks/           # Custom React hooks
+│   ├── useConstellations.ts
+│   ├── useZoomPan.ts
+│   └── ...
+├── pages/           # Route pages
+│   ├── Landing.tsx
+│   ├── Index.tsx
+│   └── NotFound.tsx
+├── types/           # TypeScript type definitions
+├── utils/           # Utility functions
+└── lib/             # Library configurations
+```
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## 🎨 Design System
 
-## Can I connect a custom domain to my Lovable project?
+The app uses a cosmic-themed design system with:
+- **Colors**: Deep space backgrounds with luminous accents
+- **Animations**: Twinkling stars, smooth transitions, parallax effects
+- **Typography**: Space Grotesk display font with system sans-serif
+- **Mood Colors**: Each emotion has a unique color palette
 
-Yes, you can!
+## 📱 Mobile Support
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Fully responsive design with:
+- Touch-optimized interactions
+- Mobile-friendly navigation
+- Adaptive layouts for all screen sizes
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 🔧 Available Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
+```
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+---
+
+Built with 💜 using [Lovable](https://lovable.dev)
