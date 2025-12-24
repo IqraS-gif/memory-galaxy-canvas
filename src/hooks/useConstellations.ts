@@ -82,10 +82,65 @@ const clearCorruptedData = () => {
 // Initialize
 clearCorruptedData();
 
-// Default constellations - empty for fresh start
-const DEFAULT_CONSTELLATIONS: Constellation[] = [];
+// Default constellations with sample data
+const DEFAULT_CONSTELLATIONS: Constellation[] = [
+  {
+    id: 'beach-2025',
+    name: 'Beach 2025',
+    pattern: 'auto',
+    createdAt: new Date('2025-01-15'),
+  },
+  {
+    id: 'friendship-day-2025',
+    name: 'Friendship Day 2025',
+    pattern: 'auto',
+    createdAt: new Date('2025-08-03'),
+  },
+];
 
-const DEFAULT_MEMORIES: Memory[] = [];
+// Beach 2025 - Capricornus V-shape pattern (11 stars)
+// Friendship Day 2025 - Sagittarius teapot pattern (11 stars)
+const DEFAULT_MEMORIES: Memory[] = [
+  // Beach 2025 - Capricornus V-shape (chevron pointing down)
+  // Top left arm going down
+  { id: 'beach-1', title: 'Sunrise at the shore', imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop', mood: 'calm', createdAt: new Date('2025-01-15T06:30:00'), position: { x: 120, y: 120 }, constellationId: 'beach-2025' },
+  { id: 'beach-2', title: 'Beach bonfire night', imageUrl: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=400&h=300&fit=crop', mood: 'happy', createdAt: new Date('2025-01-15T20:00:00'), position: { x: 220, y: 160 }, constellationId: 'beach-2025' },
+  { id: 'beach-3', title: 'Sandcastle fun', imageUrl: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=400&h=300&fit=crop', mood: 'nostalgic', createdAt: new Date('2025-01-16T14:00:00'), position: { x: 180, y: 260 }, constellationId: 'beach-2025' },
+  { id: 'beach-4', title: 'Ocean waves', imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400&h=300&fit=crop', mood: 'calm', createdAt: new Date('2025-01-16T10:00:00'), position: { x: 260, y: 340 }, constellationId: 'beach-2025' },
+  { id: 'beach-5', title: 'Sunset paradise', imageUrl: 'https://images.unsplash.com/photo-1414609245224-afa02bfb3fda?w=400&h=300&fit=crop', mood: 'happy', createdAt: new Date('2025-01-17T18:30:00'), position: { x: 340, y: 420 }, constellationId: 'beach-2025' },
+  // Bottom vertex
+  { id: 'beach-6', title: 'Seashell collection', imageUrl: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&h=300&fit=crop', mood: 'calm', createdAt: new Date('2025-01-17T11:00:00'), position: { x: 440, y: 480 }, constellationId: 'beach-2025' },
+  // Right arm going up
+  { id: 'beach-7', title: 'Palm tree vibes', imageUrl: 'https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=400&h=300&fit=crop', mood: 'happy', createdAt: new Date('2025-01-18T15:00:00'), position: { x: 540, y: 400 }, constellationId: 'beach-2025' },
+  { id: 'beach-8', title: 'Beach hammock', imageUrl: 'https://images.unsplash.com/photo-1520942702018-0862200e6873?w=400&h=300&fit=crop', mood: 'calm', createdAt: new Date('2025-01-18T16:00:00'), position: { x: 620, y: 320 }, constellationId: 'beach-2025' },
+  { id: 'beach-9', title: 'Coconut drinks', imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=300&fit=crop', mood: 'happy', createdAt: new Date('2025-01-18T17:00:00'), position: { x: 700, y: 240 }, constellationId: 'beach-2025' },
+  { id: 'beach-10', title: 'Starfish finds', imageUrl: 'https://images.unsplash.com/photo-1509233725247-49e657c54213?w=400&h=300&fit=crop', mood: 'nostalgic', createdAt: new Date('2025-01-19T10:00:00'), position: { x: 760, y: 160 }, constellationId: 'beach-2025' },
+  { id: 'beach-11', title: 'Tropical sunset', imageUrl: 'https://images.unsplash.com/photo-1476673160081-cf065bc4cf87?w=400&h=300&fit=crop', mood: 'calm', createdAt: new Date('2025-01-19T18:00:00'), position: { x: 820, y: 100 }, constellationId: 'beach-2025' },
+
+  // Friendship Day 2025 - Sagittarius teapot pattern
+  // Far left star
+  { id: 'friends-1', title: 'Best friends forever', imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop', mood: 'happy', createdAt: new Date('2025-08-03T12:00:00'), position: { x: 120, y: 280 }, constellationId: 'friendship-day-2025' },
+  // Top-left of teapot box
+  { id: 'friends-2', title: 'Squad goals', imageUrl: 'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?w=400&h=300&fit=crop', mood: 'happy', createdAt: new Date('2025-08-03T14:00:00'), position: { x: 260, y: 180 }, constellationId: 'friendship-day-2025' },
+  // Top-middle of box
+  { id: 'friends-3', title: 'Hugs and smiles', imageUrl: 'https://images.unsplash.com/photo-1543807535-eceef0bc6599?w=400&h=300&fit=crop', mood: 'calm', createdAt: new Date('2025-08-03T16:00:00'), position: { x: 460, y: 150 }, constellationId: 'friendship-day-2025' },
+  // Bottom-left of box
+  { id: 'friends-4', title: 'Coffee dates', imageUrl: 'https://images.unsplash.com/photo-1524601500432-1e1a4c71d692?w=400&h=300&fit=crop', mood: 'nostalgic', createdAt: new Date('2025-08-03T18:00:00'), position: { x: 320, y: 380 }, constellationId: 'friendship-day-2025' },
+  // Bottom-middle of box
+  { id: 'friends-5', title: 'Adventure time', imageUrl: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400&h=300&fit=crop', mood: 'happy', createdAt: new Date('2025-08-03T21:00:00'), position: { x: 540, y: 380 }, constellationId: 'friendship-day-2025' },
+  // Center-right junction
+  { id: 'friends-6', title: 'Sunset walks', imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop', mood: 'calm', createdAt: new Date('2025-08-03T19:00:00'), position: { x: 700, y: 280 }, constellationId: 'friendship-day-2025' },
+  // Upper branch point
+  { id: 'friends-7', title: 'Road trip crew', imageUrl: 'https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=400&h=300&fit=crop', mood: 'happy', createdAt: new Date('2025-08-04T10:00:00'), position: { x: 600, y: 160 }, constellationId: 'friendship-day-2025' },
+  // Top star (highest)
+  { id: 'friends-8', title: 'Picnic memories', imageUrl: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400&h=300&fit=crop', mood: 'nostalgic', createdAt: new Date('2025-08-04T12:00:00'), position: { x: 760, y: 80 }, constellationId: 'friendship-day-2025' },
+  // Far right star
+  { id: 'friends-9', title: 'Dance party', imageUrl: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=400&h=300&fit=crop', mood: 'happy', createdAt: new Date('2025-08-04T22:00:00'), position: { x: 860, y: 280 }, constellationId: 'friendship-day-2025' },
+  // Bottom point going down
+  { id: 'friends-10', title: 'Forever grateful', imageUrl: 'https://images.unsplash.com/photo-1523301343968-6a6ebf63c672?w=400&h=300&fit=crop', mood: 'nostalgic', createdAt: new Date('2025-08-04T23:00:00'), position: { x: 620, y: 480 }, constellationId: 'friendship-day-2025' },
+  // Very bottom point
+  { id: 'friends-11', title: 'Late night talks', imageUrl: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=400&h=300&fit=crop', mood: 'calm', createdAt: new Date('2025-08-05T01:00:00'), position: { x: 680, y: 580 }, constellationId: 'friendship-day-2025' },
+];
 
 export const useConstellations = () => {
   const [constellations, setConstellations] = useState<Constellation[]>([]);
@@ -128,13 +183,19 @@ export const useConstellations = () => {
       }
     }
     
-    // Filter out any old default constellations
-    loadedConstellations = loadedConstellations.filter(c => 
-      c.id !== 'beach-2025' && c.id !== 'friendship-day-2025'
-    );
-    loadedMemories = loadedMemories.filter(m => 
-      m.constellationId !== 'beach-2025' && m.constellationId !== 'friendship-day-2025'
-    );
+    // Add default constellations if they don't exist
+    const hasBeach = loadedConstellations.some(c => c.id === 'beach-2025');
+    const hasFriendship = loadedConstellations.some(c => c.id === 'friendship-day-2025');
+    
+    if (!hasBeach) {
+      loadedConstellations.push(DEFAULT_CONSTELLATIONS[0]);
+      loadedMemories.push(...DEFAULT_MEMORIES.filter(m => m.constellationId === 'beach-2025'));
+    }
+    
+    if (!hasFriendship) {
+      loadedConstellations.push(DEFAULT_CONSTELLATIONS[1]);
+      loadedMemories.push(...DEFAULT_MEMORIES.filter(m => m.constellationId === 'friendship-day-2025'));
+    }
     
     setConstellations(loadedConstellations);
     setMemories(loadedMemories);
